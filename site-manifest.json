@@ -1,22 +1,21 @@
 {
   "schema": "HKIA.BetaArtifactPreparation.1",
-  "state": "V33_ITEMS_ROOT_192_SELF_QA_CANDIDATE_NOT_RELEASE_AUTHORIZED",
+  "state": "V33_ACHIEVEMENT_ROOT_192_SELF_QA_CANDIDATE_NOT_RELEASE_AUTHORIZED",
   "writer": "OFF",
-  "sourceSha256": "ab1edbca5ba669c35b567ef4e985e7c63fdce980a9798ce8f8607d8e5fa402d8",
-  "baseArtifactManifestSha256": "625379c7b0b7be5bf8d6310f26b2bdc596db977715a16d94e388909bcc1442e6",
-  "entries": 4177,
-  "bytes": 147322575,
+  "sourceSha256": "b2174ef03dce1d8da926325d49b1fbc48b478df9ef764368809e3f833bd2bfbd",
+  "baseArtifactManifestSha256": "6bb1fb2cb6d3897aca0f8a5380dd094efa41701b4377657730ae4db6f4a8bed0",
+  "entries": 4179,
+  "bytes": 147339938,
   "webp": 4076,
-  "modules": 69,
+  "modules": 71,
   "modifiedPaths": [
     "src/app.js",
     "src/product-locale-root-192.mjs",
     "src/product-locale-root-192-boot.mjs"
   ],
   "addedPaths": [
-    "src/product-collection-items-locale.mjs",
-    "src/product-collection-items-locale-port.mjs",
-    "src/editor-catalog-composite.mjs"
+    "src/product-achievement-list-locale.mjs",
+    "src/ctrl-achievement-list-locale-port.mjs"
   ],
   "files": {
     ".nojekyll": {
@@ -16600,8 +16599,8 @@
       "sha256": "8b5e3e7049055ef38a647afe75635a9fc45fc44b10af3e4b473417f9d2021019"
     },
     "src/app.js": {
-      "bytes": 114365,
-      "sha256": "22d8b61ccb729fa3ff08cb418fd4baf4f6a57934feb4c52796630e114d6bf76d"
+      "bytes": 115296,
+      "sha256": "d6360497c783cb3a827d562a38d674986484978731e334dd736faf980bc343f7"
     },
     "src/collection-history-extension.js": {
       "bytes": 9717,
@@ -16626,6 +16625,10 @@
     "src/collection-state-contract.js": {
       "bytes": 10625,
       "sha256": "17af1a53c12c27b215a361306d6b9327f51fcb6dc5dc45e3800b571f3498a783"
+    },
+    "src/ctrl-achievement-list-locale-port.mjs": {
+      "bytes": 3377,
+      "sha256": "180b9b5e0e690c90c78fcd841b488388eb07d7d7ecbc88fc0e90c69a37efa5fb"
     },
     "src/download.js": {
       "bytes": 424,
@@ -16659,6 +16662,10 @@
       "bytes": 68360,
       "sha256": "af5e87d06fc5872fc504c1ec4c924fbd33b5f56c35953df765c4890e1bdcdaa7"
     },
+    "src/product-achievement-list-locale.mjs": {
+      "bytes": 12218,
+      "sha256": "783ab5acb36dae3eba82b126886e992a8143699b56739336edac22e01ce1770f"
+    },
     "src/product-achievement-list.mjs": {
       "bytes": 77875,
       "sha256": "a3a20d478013b43e882eb0f64e6135e1b174da856b552ba39cdbf26ba2d12dc6"
@@ -16688,16 +16695,16 @@
       "sha256": "f18f00d9d31e7190f659b1839d77b58360d7ad7576360113df51fe4401a9c0c5"
     },
     "src/product-locale-root-192-boot.mjs": {
-      "bytes": 1381,
-      "sha256": "86b9c0713767c83583a11419e837e1fd1ae76876ff15e945993ce8f83dfe60db"
+      "bytes": 1530,
+      "sha256": "8d3cfc640863a7a3eae174fe87534af3d36e7f319f007c0579b75c8671415413"
     },
     "src/product-locale-root-192.css": {
       "bytes": 524,
       "sha256": "c26d750d29ce9de549a160855858c9a0731b7afee3ee8c0ed05016db25db6074"
     },
     "src/product-locale-root-192.mjs": {
-      "bytes": 94174,
-      "sha256": "2bea563e895d279497582ed3082da943c2729cb44348336325792033a71932b5"
+      "bytes": 94862,
+      "sha256": "f75655aac0cbe681ef692d9d33c08a637b45ae787c937ffc78a98f9e2a57f115"
     },
     "src/product-tabs.mjs": {
       "bytes": 76066,

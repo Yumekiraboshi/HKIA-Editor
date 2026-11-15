@@ -328,13 +328,13 @@ function appendDependencies(host,deps){
   panel.append(node('p','editor-hint','連動更新は0件です。UNKNOWNをゼロまたは未取得とは解釈しません。'));host.append(panel);
 }
 
-let productAchievementListBridge=null;
+let productAchievementListBridge=null,productAchievementListLocale=null;
 function renderProductAchievementList(list,all,acc,save){
   if(!productAchievementListBridge||state.achLimit>1200)return;
-  try{const media=imageUi();productAchievementListBridge.render(list,{rows:all.slice(0,state.achLimit).map(r=>({guid:r.guid,title:achievementTitle(r),kind:r.kind,sourceKnown:r.kind==='account'?state.achievementDefinitions.has(r.guid.toLowerCase()):state.localAchievementDefinitions.has(r.guid.toLowerCase()),complete:r.complete,current:r.current===null?null:String(r.current),id:r.id===null?null:String(r.id),imageEnabled:!!media,image:media?achievementArt(r)??null:null,externalUnknown:r.kind==='account'&&!!media?.externalAccount(r.guid)})),selectedGuid:state.selectedAchievement,total:all.length,limit:state.achLimit,empty:state.source==='slot'&&state.slotEvidence?.readable.achievement===false?'unreadable':acc||save?'no-match':'unloaded'});}catch{}
+  try{const media=imageUi();const facts={rows:all.slice(0,state.achLimit).map(r=>({guid:r.guid,title:achievementTitle(r),kind:r.kind,sourceKnown:r.kind==='account'?state.achievementDefinitions.has(r.guid.toLowerCase()):state.localAchievementDefinitions.has(r.guid.toLowerCase()),complete:r.complete,current:r.current===null?null:String(r.current),id:r.id===null?null:String(r.id),imageEnabled:!!media,image:media?achievementArt(r)??null:null,externalUnknown:r.kind==='account'&&!!media?.externalAccount(r.guid)})),selectedGuid:state.selectedAchievement,total:all.length,limit:state.achLimit,empty:state.source==='slot'&&state.slotEvidence?.readable.achievement===false?'unreadable':acc||save?'no-match':'unloaded'};const epoch=state.sourceLoadEpoch,source=state.source,selected=state.selectedAchievement,limit=state.achLimit;const current=()=>state.sourceLoadEpoch===epoch&&state.source===source&&state.selectedAchievement===selected&&state.achLimit===limit;const mounted=productAchievementListBridge.render(list,facts);if(productAchievementListLocale){if(mounted==='MOUNTED'){if(productAchievementListLocale.attach(facts,current)!=='APPLIED'){productAchievementListBridge.restore();productAchievementListLocale.invalidate();}}else if(!(limit>=1200&&all.length>limit))productAchievementListLocale.invalidate();}}catch{productAchievementListBridge?.restore();productAchievementListLocale?.invalidate();}
 }
 function renderAchievements(){
-  productAchievementListBridge?.restore();
+  productAchievementListLocale?.clear();productAchievementListBridge?.restore();
   const acc=!!state.account,save=!!state.save;
   el('sourceSwitch').hidden=!(acc&&save);
   el('accountSource').disabled=!acc;el('slotSource').disabled=!save;
@@ -767,7 +767,7 @@ async function bootstrap(){
       const old=state.slotGroupMembers.get(r.group_counter_guid)||[];old.push(r);state.slotGroupMembers.set(r.group_counter_guid,old);
     }
     try{const {createProductCategoryBridge,verifyCategoryCatalog}=await import('./product-categories-locale.mjs');productCategoryBridge=createProductCategoryBridge(document);productCategoryLocaleVerifier=verifyCategoryCatalog;}catch{}
-    try{const {createProductAchievementListBridge}=await import('./product-achievement-list.mjs');productAchievementListBridge=createProductAchievementListBridge(document);}catch{}
+    try{const {createProductAchievementListBridge}=await import('./product-achievement-list.mjs');productAchievementListBridge=createProductAchievementListBridge(document);const {createProductAchievementListLocalePort}=await import('./ctrl-achievement-list-locale-port.mjs');productAchievementListLocale=createProductAchievementListLocalePort(document);}catch{}
     try{const {createProductAchievementHeader}=await import('./product-achievement-header.mjs');productAchievementHeader=createProductAchievementHeader(document);}catch{}
     try{const {createProductCollectionItems}=await import('./product-collection-items.mjs');productCollectionItems=createProductCollectionItems(document);const {createProductCollectionItemsLocalePort}=await import('./product-collection-items-locale-port.mjs');productCollectionItemsLocale=createProductCollectionItemsLocalePort(document);}catch{}
     renderAchievements();renderCollections();
@@ -814,6 +814,6 @@ async function bootstrap(){
   try{const {mountProductFilters}=await import('./product-filters.mjs');mountProductFilters(document,{achievement:onAchievementsFilter,collection:renderCollections},()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
   renderAchievements();
   try{const {mountProductTabs}=await import('./product-tabs.mjs');mountProductTabs(document,setTab,()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
-  try{const {startProductLocaleRoot192}=await import('./product-locale-root-192-boot.mjs');productLocaleRoot=startProductLocaleRoot192(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale);}catch{const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
+  try{const {startProductLocaleRoot192}=await import('./product-locale-root-192-boot.mjs');productLocaleRoot=startProductLocaleRoot192(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale,productAchievementListLocale);}catch{const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
 }
 bootstrap();
