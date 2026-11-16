@@ -38,9 +38,10 @@ const nativeModuleStaged=()=>document.documentElement.dataset.nativePreview==='s
 function closeNativePreviewSession(){nativeOpenAttempt++;nativePreview.close();}
 function renderNativeSession(){
   const host=el('nativeSessionStatus');if(!host)return;let x=nativePreview.status();if(!x.ready&&!x.busy&&x.revision){closeNativePreviewSession();x=nativePreview.status();}host.replaceChildren();
+  const diagnostics=el('nativeSessionDiagnostics');diagnostics.replaceChildren();diagnostics.hidden=!x.ready;
   const facts=displayFacts(()=>projectNative252Facts({ready:!!x.ready,busy:!!x.busy,moduleStaged:nativeModuleStaged(),notice:nativeNoticeFact,version:x.version??null,revision:x.revision??null,capabilities:x.capability?.allowedPreviewOperations??null,stagedOperation:x.staged?.operation??null}));
   appendFileDetail(host,'Native Preview',x.ready?'Session ready（操作別出力ゲート）':x.busy?'処理中':nativeNotice||(!nativeModuleStaged()?'Native検証モジュール未配置（読取のみ）':'ZIPを選択して検証Sessionを開く'),facts?{label:facts.label,value:facts.main}:null);
-  if(x.ready){appendFileDetail(host,'Version / Slot',x.version+' / Saves/save_0.save',facts?.details[0]);appendFileDetail(host,'Revision',x.revision,facts?.details[1]);appendFileDetail(host,'Preview capabilities',x.capability.allowedPreviewOperations.join(' / '),facts?.details[2]);appendFileDetail(host,'Apply / Export',x.staged?'検証済み候補を出力可能':'BLOCKED — 操作別Capability・独立受入・Verifyが必要',facts?.details[3]);}
+  if(x.ready){appendFileDetail(diagnostics,'Version / Slot',x.version+' / Saves/save_0.save',facts?.details[0]);appendFileDetail(diagnostics,'Revision',x.revision,facts?.details[1]);appendFileDetail(diagnostics,'Preview capabilities',x.capability.allowedPreviewOperations.join(' / '),facts?.details[2]);appendFileDetail(host,'Apply / Export',x.staged?'検証済み候補を出力可能':'BLOCKED — 操作別Capability・独立受入・Verifyが必要',facts?.details[3]);}
   el('openNativePreview').disabled=!nativeModuleStaged()||x.busy||!state.archiveLoaded||!state.originalBytes||!state.save||!state.account||state.sourceLoading||state.dirty||!state.sourceRevision||x.ready;
   el('closeNativePreview').disabled=!x.ready&&!x.busy;
   el('nativeDownload').disabled=!nativePreview.outputStatus().export;
@@ -48,6 +49,7 @@ function renderNativeSession(){
   if(x.staged){const row=detailLine('検証済み候補',x.staged.operation+' / 未ダウンロード');host.append(row);fileWrite(row.firstChild,facts?.staged?.label??null,'検証済み候補');fileWrite(row.lastChild,facts?.staged?[facts.staged.operation,facts.staged.status]:null,x.staged.operation+' / 未ダウンロード',' / ');}
   if(x.recipeRestore){host.append(detailLine('Recipe復元Receipt','同一Session・この編集済みコピーのみ。ゲーム再保存、別File選択、Session終了、再起動後は復元不可。'),detailLine('復元対象',`ItemId ${x.recipeRestore.itemId} / Document ${x.recipeRestore.documentId} / Quantity 0 → 1`));const c=recipeConsentControls(),restore=node('button','btn-secondary','Recipeを復元して別名出力');restore.type='button';restore.disabled=true;const update=()=>{restore.disabled=!x.recipeRestore.available||!c.accepted();};c.first.addEventListener('change',update);c.second.addEventListener('change',update);restore.addEventListener('click',async()=>{if(restore.disabled)return;const attempt=nativeOpenAttempt,epoch=state.sourceLoadEpoch;try{const pending=nativePreview.restoreRecipe(c.value());renderNativeSession();const file=await pending;if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch||!nativePreview.status().ready)return;offerFile(file,'recipe-restored.zip','application/zip');setNativeNotice('Recipe復元済みコピーを別名出力。ゲーム受入は未確認。');}catch(e){if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch)return;setNativeNotice('復元失敗・出力なし：'+e.message);}renderNativeSession();renderCollections();});host.append(c.box,restore);}
   if(nativeNotice&&x.ready)appendFile(host,'p','editor-hint',facts?.notice??null,nativeNotice);
+  notifyShellSource();
 }
 function adoptNativeDisplay(){
   const view=nativePreview.status().display;if(!view||view.schema!=='HKIA.Web05.SlotDisplay.2'||view.evidence?.accountExportAllowed!==false||view.evidence?.writerEnabled!==false||view.nativeSchemaEvidence?.typedDictionaryKeysVerified!==true)throw Error('UNACCEPTED_NATIVE_DISPLAY');
@@ -128,20 +130,23 @@ function clearPreviousPreview(){
   for(const id of ['batchResult','editorPanel','colUnknownPanel','collectionDetail'])el(id).replaceChildren();
 }
 function renderSourceRevision(){
-  const host=el('sourceRevisionNotice');host.replaceChildren();
+  const host=el('sourceRevisionNotice'),warnings=el('sourceRevisionWarnings');
+  host.replaceChildren();warnings.replaceChildren();
   host.hidden=!(state.sourceRevision||state.sourceRevisionError||state.sourceLoading||state.revisionChanged);
+  warnings.hidden=!(state.sourceLoading||state.sourceRevisionError||state.revisionChanged||!state.sourceRevision&&!host.hidden);
+  fileWrite(el('fileDiagnosticsSummary'),[fileRole('native.revisionLabel'),fileRole('native.previewLabel')],'Revision / Native Preview',' / ');
   if(host.hidden)return;
   const facts=currentFileFacts(), receipts=new Map((facts?.revision??[]).map(r=>[r.key,r]));
   const heading=state.sourceLoading?'revision.checking':state.sourceRevision?'revision.observed':'revision.unknown';
-  appendFile(host,'strong','',receipts.get(heading)??null,state.sourceLoading?'Source revision 確認中・編集レビュー無効':state.sourceRevision?'Source revision：ローカルSHA-256観測済み（Native CAS未実行）':'Source revision：UNKNOWN');
+  appendFile(state.sourceLoading||!state.sourceRevision?warnings:host,'strong','',receipts.get(heading)??null,state.sourceLoading?'Source revision 確認中・編集レビュー無効':state.sourceRevision?'Source revision：ローカルSHA-256観測済み（Native CAS未実行）':'Source revision：UNKNOWN');
   if(state.sourceRevision){
     const revision=state.sourceRevision;
     appendFile(host,'p','',receipts.get('revision.inputDetail')??null,`入力形式 ${revision.format} / SHA-256 ${revision.sha256.slice(0,16)}… / 読込世代 ${revision.epoch}`);
     const status=inspectRevisionCAS({expected:revision,current:revision,readEvidence:state.slotEvidence});
     appendFile(host,'p','',status.status==='LOCAL_SNAPSHOT_MATCH_ONLY'?(receipts.get('revision.snapshotNotice')??null):null,`UIスナップショット照合 ${status.status}。研究用CAS証拠≠実適用許可。Native Apply/Exportは禁止。`);
   }
-  if(state.revisionChanged)appendFile(host,'p','error-message',receipts.get('revision.fileChanged')??null,'SOURCE_REVISION_MISMATCH：前回と異なるファイルを選択しました。旧プレビューは破棄済みです。現在の入力から再作成してください。');
-  if(state.sourceRevisionError)appendFile(host,'p','error-message',receipts.get('revision.unknownReason')??null,`SOURCE_REVISION_UNKNOWN：${state.sourceRevisionError}。Native CAS状態を検証できません。`);
+  if(state.revisionChanged)appendFile(warnings,'p','error-message',receipts.get('revision.fileChanged')??null,'SOURCE_REVISION_MISMATCH：前回と異なるファイルを選択しました。旧プレビューは破棄済みです。現在の入力から再作成してください。');
+  if(state.sourceRevisionError)appendFile(warnings,'p','error-message',receipts.get('revision.unknownReason')??null,`SOURCE_REVISION_UNKNOWN：${state.sourceRevisionError}。Native CAS状態を検証できません。`);
   appendFile(host,'p','editor-hint',receipts.get('revision.comparisonScope')??null,'読み込んだバイト列のみの比較です。ディスク上の同時変更やゲーム側での変更を監視せず、Native Writerの整合性・受入を証明しません。');
 }
 function nativePreviewBinding(domain){
@@ -188,7 +193,7 @@ async function downloadEditedArchive(){
     state.zipExportBusy=false;setStatus();
   }
 }
-function setStatus(){let n=state.account&&state.save?'Account + Save slot':state.account?'Account JSON':state.save?'Save slot':'未読み込み';const block=state.slotEvidence?.accountExportAllowed===false||state.sourceLoading||state.revisionChanged&&state.sourceRevision===null;const facts=currentFileFacts();fileWrite(el('fileStatus'),facts?.fileStatus??null,n+(state.dirty?' • 未保存の変更':'')+(block?' • 構造READ ONLY':''),' • ');fileWrite(el('downloadZip'),facts?.zipLabel??null,state.zipExportBusy?'ZIPを検証・生成中…':'編集したZIPを保存');el('downloadEdited').disabled=!state.account||!state.dirty||block;el('downloadZip').hidden=!state.archiveLoaded;el('downloadZip').disabled=!state.archiveLoaded||!state.account||!state.dirty||block||!state.sourceRevision||state.sourceRevision.format!=='zip'||state.zipExportBusy;}
+function setStatus(){let n=state.account&&state.save?'Account + Save slot':state.account?'Account JSON':state.save?'Save slot':'未読み込み';const block=state.slotEvidence?.accountExportAllowed===false||state.sourceLoading||state.revisionChanged&&state.sourceRevision===null;const facts=currentFileFacts();fileWrite(el('fileStatus'),facts?.fileStatus??null,n+(state.dirty?' • 未保存の変更':'')+(block?' • 構造READ ONLY':''),' • ');fileWrite(el('downloadZip'),facts?.zipLabel??null,state.zipExportBusy?'ZIPを検証・生成中…':'編集したZIPを保存');el('downloadEdited').disabled=!state.account||!state.dirty||block;el('downloadZip').hidden=!state.archiveLoaded;el('downloadZip').disabled=!state.archiveLoaded||!state.account||!state.dirty||block||!state.sourceRevision||state.sourceRevision.format!=='zip'||state.zipExportBusy;notifyShellSource();}
 function displayValue(value){return value===null?'未設定':typeof value==='boolean'?(value?'達成済み':'未達成'):String(value);}
 function refreshAccountDirty(){
   state.dirty=Boolean(state.accountBaseline&&accountChangeSet(state.accountBaseline,state.account).length);
@@ -263,22 +268,71 @@ function showInfo(){const a=state.account?Object.keys(state.account.Achievements
   }
   setStatus();}
 const replacementDirtyMessages=Object.freeze({"de":["Es gibt noch nicht exportierte Änderungen","Änderungen verwerfen und fortfahren?"],"en":["You have changes that have not been exported","Discard the changes and continue?"],"en-GB":["You have changes that have not been exported","Discard the changes and continue?"],"es":["Hay cambios que aún no se han exportado","¿Descartar los cambios y continuar?"],"fr":["Des modifications n’ont pas encore été exportées","Abandonner les modifications et continuer ?"],"fr-CA":["Des modifications n’ont pas encore été exportées","Abandonner les modifications et continuer?"],"it":["Ci sono modifiche non ancora esportate","Scartare le modifiche e continuare?"],"ja":["未出力の変更があります","変更を破棄して続けますか？"],"ko":["아직 내보내지 않은 변경 사항이 있습니다","변경 사항을 버리고 계속할까요?"],"nl":["Er zijn wijzigingen die nog niet zijn geëxporteerd","Wijzigingen verwerpen en doorgaan?"],"pt-BR":["Há alterações que ainda não foram exportadas","Descartar as alterações e continuar?"],"ru":["Есть ещё не экспортированные изменения","Отбросить изменения и продолжить?"],"tr":["Henüz dışa aktarılmamış değişiklikler var","Değişiklikler atılsın ve devam edilsin mi?"],"zh-Hans":["有尚未导出的更改","放弃更改并继续吗？"],"zh-Hant":["有尚未匯出的變更","捨棄變更並繼續嗎？"]});
-async function loadFile(file){
-  if(!file)return;
-  if(state.dirty){const locale=document.querySelector('[data-hkia-locale-chrome]')?.getAttribute('data-hkia-locale-chrome');const message=Object.hasOwn(replacementDirtyMessages,locale)?replacementDirtyMessages[locale]:replacementDirtyMessages.en;if(!window.confirm(message.join('\n\n')))return;}
-  clearError();
-  closeNativePreviewSession();setNativeNotice('');
-  const prior=state.sourceRevision;
-  const epoch=++state.sourceLoadEpoch;
-  state.accountEditGeneration++;
-  state.sourceLoading=true;state.sourceRevision=null;state.sourceRevisionError=null;state.revisionChanged=false;
+function failSaveFirst(){
+  const workspace=el('hkiaProductWorkspace'),host=el('hkiaSaveFirstHost');
+  if(workspace){workspace.hidden=true;workspace.inert=true;}
+  if(host){host.setAttribute('role','alert');host.textContent='Save editor unavailable. Reload to retry.';}
+}
+let shellRefresh=null,shellRefreshPending=false;
+function notifyShellSource(){
+  if(!shellRefresh||shellRefreshPending)return;
+  shellRefreshPending=true;
+  queueMicrotask(()=>{shellRefreshPending=false;shellRefresh?.();});
+}
+function readShellSource(){
+  const native=nativePreview.status();
+  const busy=Boolean(state.sourceLoading||state.zipExportBusy||native.busy);
+  const ready=Boolean(!state.sourceLoading&&state.originalBytes&&(state.account||state.save)&&state.sourceRevision&&/^[0-9a-f]{64}$/.test(state.sourceRevision.sha256)&&state.originalName);
+  const phase=state.sourceLoading?'loading':ready?'ready':state.sourceRevisionError||state.originalBytes?'error':'empty';
+  return Object.freeze({sourceLoadEpoch:state.sourceLoadEpoch,accountEditGeneration:state.accountEditGeneration,nativeOpenAttempt,phase,
+    revision:ready?state.sourceRevision.sha256:null,dirty:ready&&Boolean(state.dirty||native.staged),name:ready?state.originalName:null,
+    reason:phase==='error'?(state.sourceRevisionError||'SOURCE_NOT_VALIDATED'):null,busy});
+}
+function matchesShellSource(expected,actual){
+  return !!expected&&Object.keys(actual).every(k=>Object.hasOwn(expected,k)&&expected[k]===actual[k])&&Object.keys(expected).length===Object.keys(actual).length;
+}
+function createShellSourcePort(){
+  return Object.freeze({read:readShellSource,
+    connect(refresh){if(shellRefresh||typeof refresh!=='function')throw Error('SHELL_SOURCE_CONNECTION');shellRefresh=refresh;return ()=>{if(shellRefresh===refresh)shellRefresh=null;};},
+    async execute(intent,expected){
+      const actual=readShellSource();
+      if(!matchesShellSource(expected,actual)||actual.busy||actual.phase==='loading'||intent.revision!==actual.revision||intent.discardConfirmed!==actual.dirty)return false;
+      if(intent.kind==='open'&&intent.file instanceof File){
+        await loadFile(intent.file,expected);
+        const next=readShellSource();return next.sourceLoadEpoch===actual.sourceLoadEpoch+1&&next.phase==='ready';
+      }
+      if(intent.kind==='close'&&intent.file===null&&actual.phase==='ready'){
+        retireSource(false);renderRetiredSource();return readShellSource().phase==='empty';
+      }
+      return false;
+    }
+  });
+}
+function retireSource(loading){
+  el('fileDiagnostics').open=false;
+  clearError();closeNativePreviewSession();setNativeNotice('');
+  const epoch=++state.sourceLoadEpoch;state.accountEditGeneration++;
+  state.sourceLoading=loading;state.sourceRevision=null;state.sourceRevisionError=null;state.revisionChanged=false;
   state.account=null;state.accountBaseline=null;state.accountOriginal=null;state.history=[];
   state.save=null;state.saveOriginal=null;state.slotEvidence=null;state.collectionMatch=null;
   state.parentMatch=null;state.collectionReadModel=null;state.collectionHistoryDisplay=null;
   state.slotCountersByGuid=new Map();state.slotAchievementsByGuid=new Map();
-  state.originalBytes=null;state.archiveLoaded=false;state.dirty=false;state.selectedAchievement=null;
+  state.originalBytes=null;state.originalName=null;state.archiveLoaded=false;state.dirty=false;state.selectedAchievement=null;
   state.selectedItemId=null;state.selectedCollection=null;state.selectedCollectionDefinition=null;
+  state.source='account';state.visibleAccountGuids=[];state.achLimit=120;
+  return epoch;
+}
+function renderRetiredSource(){
   el('fileInfo').hidden=true;clearPreviousPreview();setStatus();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();
+}
+
+async function loadFile(file,shellExpected=null){
+  if(!file)return;
+  if(shellExpected!==null){const actual=readShellSource();if(!matchesShellSource(shellExpected,actual)||actual.busy)return;}
+  else if(state.dirty){const locale=document.querySelector('[data-hkia-locale-chrome]')?.getAttribute('data-hkia-locale-chrome');const message=Object.hasOwn(replacementDirtyMessages,locale)?replacementDirtyMessages[locale]:replacementDirtyMessages.en;if(!window.confirm(message.join('\n\n')))return;}
+  const prior=state.sourceRevision;
+  const epoch=retireSource(true);
+  renderRetiredSource();
   if(file.size>60*1024*1024){state.sourceLoading=false;state.sourceRevisionError='60MBを超えるファイルは未対応です';setStatus();renderSourceRevision();error(state.sourceRevisionError,fileRole('file.tooLarge'));return;}
   let bytes;
   try{bytes=new Uint8Array(await file.arrayBuffer());}
@@ -809,7 +863,6 @@ async function bootstrap(){
   renderNativeSession();
   el('achTab').addEventListener('click',()=>setTab('achievements'));el('colTab').addEventListener('click',()=>setTab('collections'));
   for(const name of ['achTab','colTab'])el(name).addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const next=ev.key==='Home'?'achTab':ev.key==='End'?'colTab':name==='achTab'?'colTab':'achTab';setTab(next==='colTab'?'collections':'achievements');el(next).focus();}});
-  el('saveInput').addEventListener('change',async e=>{await loadFile(e.target.files?.[0]);e.target.value='';});
   el('downloadOriginal').addEventListener('click',downloadOriginal);el('downloadEdited').addEventListener('click',downloadAccount);el('downloadZip').addEventListener('click',downloadEditedArchive);
   const onAchievementsFilter=()=>{state.achLimit=120;el('batchResult').replaceChildren();renderAchievements();};
   el('achievementSearch').addEventListener('input',onAchievementsFilter);el('achievementFilter').addEventListener('change',onAchievementsFilter);el('achievementSort').addEventListener('change',onAchievementsFilter);el('achievementImageFilter').addEventListener('change',onAchievementsFilter);
@@ -838,12 +891,9 @@ async function bootstrap(){
   });
   el('accountSource').addEventListener('click',()=>{state.source='account';state.selectedAchievement=null;state.achLimit=120;el('batchResult').replaceChildren();renderAchievements();});
   el('slotSource').addEventListener('click',()=>{state.source='slot';state.selectedAchievement=null;state.achLimit=120;el('batchResult').replaceChildren();renderAchievements();});
-  const drop=el('dropArea');
-  drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
-  drop.addEventListener('drop',async e=>{e.preventDefault();drop.classList.remove('drag');await loadFile(e.dataTransfer?.files?.[0]);});
   try{const {mountProductFilters}=await import('./product-filters.mjs');mountProductFilters(document,{achievement:onAchievementsFilter,collection:renderCollections},()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
   renderAchievements();
   try{const {mountProductTabs}=await import('./product-tabs.mjs');mountProductTabs(document,setTab,()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
-  try{const {startProductLocaleRoot252}=await import('./product-locale-root-192-boot.mjs');if(!file252Port)throw Error('FILE252_PORT_UNAVAILABLE');productLocaleRoot=startProductLocaleRoot252(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale,productAchievementListLocale,file252Port);}catch{const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
+  try{const {startProductLocaleRoot252}=await import('./product-locale-root-192-boot.mjs');if(!file252Port)throw Error('FILE252_PORT_UNAVAILABLE');productLocaleRoot=startProductLocaleRoot252(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale,productAchievementListLocale,file252Port,{...createShellSourcePort(),host:el('hkiaSaveFirstHost'),workspace:el('hkiaProductWorkspace'),localeHost:el('hkiaLocaleChrome'),credits:el('attributionNotice'),onError:failSaveFirst});}catch{failSaveFirst();const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
 }
 bootstrap();

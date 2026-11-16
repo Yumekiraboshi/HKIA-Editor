@@ -92,3 +92,84 @@ button:disabled{opacity:.58;cursor:not-allowed}
 .file-surface .choose-file,.file-surface .button-row button{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
 .file-surface .file-heading{gap:8px;flex-wrap:wrap}
 .file-surface .file-heading h3{min-width:0;overflow-wrap:anywhere}
+
+                                                                             
+.hk-product-save-first{max-width:none;width:100%;min-width:0}
+.hk-product-save-first main,#hkiaSaveFirstHost,#hkiaLocaleChrome,#hkiaProductWorkspace{min-width:0}
+.hk-product-save-first #hkiaProductWorkspace[hidden]{display:none!important}
+.hk-product-save-first:has(#hkiaProductWorkspace[hidden]) #hkiaLocaleChrome [data-hkia-locale-scope]{display:none}
+.hk-product-save-first .hk-shell-external{min-block-size:0;block-size:auto}
+.hk-product-save-first .hk-shell-external>.hk-shell-localized{min-block-size:0;max-block-size:none;overflow:visible}
+.hk-product-save-first .hk-shell-external .hk-shell{min-block-size:0;padding:8px 12px}
+.hk-product-save-first .hk-shell-external .hk-shell-header{padding-bottom:4px}
+.hk-product-save-first .hk-shell-external .hk-shell-main{padding-top:4px}
+.hk-product-save-first .hk-shell-external .hk-shell-toolbar{padding:6px 10px}
+.hk-product-save-first .hk-shell-external .hk-shell footer{padding:4px 0}
+.hk-product-save-first #hkiaLocaleChrome [data-hkia-locale-scope]{max-block-size:5.5rem;overflow:auto;overscroll-behavior:contain}
+.hk-product-save-first .hk-product-controls,.hk-product-save-first .hk-product-collection-panels{min-inline-size:0;overflow-wrap:anywhere}
+.hk-product-save-first .workspace{margin:0}
+.hk-product-save-first .file-surface{margin-block-start:12px}
+.hk-product-save-first .file-info{flex-direction:column;align-items:stretch;gap:8px}
+.hk-product-save-first .primary-tab{padding:10px 8px}
+.hk-product-save-first .content-panel{padding:12px}
+.hk-product-save-first .panel-header h3{font-size:18px;margin:0 0 4px}
+.hk-product-save-first .toolbar,.hk-product-save-first .metric-grid,.hk-product-save-first .source-switch,.hk-product-save-first .notice,.hk-product-save-first .collections-search,.hk-product-save-first .change-bar,.hk-product-save-first .batch-panel{margin-block:8px}
+.hk-product-save-first .metric{padding:8px}
+.hk-product-save-first .metric strong{font-size:18px}
+.hk-product-save-first .editor-panel{min-height:0;padding:12px}
+.hk-product-save-first .file-surface{padding:12px}
+.hk-product-save-first .file-heading{margin-bottom:8px}
+.hk-product-save-first>footer{padding:8px 0;margin:0;gap:2px;font-size:11px;line-height:1.4}
+.hk-product-save-first>footer #attributionNotice{order:-1}
+.hk-product-save-first>footer #attributionNotice h2{margin:3px 0}
+.hk-product-save-first>footer #attributionNotice p{margin:3px 0}
+@media(min-width:900px) and (min-height:600px){
+ .hk-product-save-first{height:100vh;height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;padding:0 12px;overflow:hidden}
+ .hk-product-save-first main{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,28%);grid-template-rows:auto minmax(0,1fr);gap:6px;min-height:0}
+ .hk-product-save-first #hkiaSaveFirstHost{grid-column:1;grid-row:1;min-height:0;max-height:31dvh;overflow:auto;overscroll-behavior:contain}
+ .hk-product-save-first #hkiaLocaleChrome{grid-column:2;grid-row:1;max-height:31dvh;overflow:auto;overscroll-behavior:contain}
+ .hk-product-save-first #hkiaProductWorkspace{grid-column:1/-1;grid-row:2;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(200px,24%);gap:8px}
+ .hk-product-save-first .workspace{display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;min-width:0}
+ .hk-product-save-first .content-panel:not([hidden]){display:grid;grid-template-rows:minmax(0,40%) minmax(0,1fr);min-height:0;gap:8px;overflow:hidden}
+ .hk-product-save-first .hk-product-controls{min-height:0;overflow:auto;overscroll-behavior:contain;padding:3px}
+ .hk-product-save-first .ach-layout{min-height:0;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:8px;overflow:hidden;padding:3px}
+ .hk-product-save-first .achievement-list,.hk-product-save-first .editor-panel{min-height:0;max-height:none;height:100%;overflow:auto;overscroll-behavior:contain;align-self:stretch}
+ .hk-product-save-first .hk-product-collection-panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:0;gap:8px;overflow:hidden;padding:3px}
+ .hk-product-save-first .hk-product-collection-panels:has(#collectionDetail[hidden]){grid-template-columns:minmax(0,1fr)}
+ .hk-product-save-first .collection-grid{min-height:0;overflow:auto;overscroll-behavior:contain;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));align-content:start}
+ .hk-product-save-first .collection-detail{min-height:0;overflow:auto;overscroll-behavior:contain;margin:0;padding:10px}
+ .hk-product-save-first .file-surface{min-height:0;overflow:auto;overscroll-behavior:contain;margin:0}
+ .hk-product-save-first>footer{max-height:18dvh;overflow:auto;overscroll-behavior:contain}
+ .hk-product-save-first:has(#hkiaProductWorkspace[hidden]) main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ .hk-product-save-first:has(#hkiaProductWorkspace[hidden]) #hkiaLocaleChrome{grid-column:1;grid-row:1;max-height:20dvh}
+ .hk-product-save-first:has(#hkiaProductWorkspace[hidden]) #hkiaSaveFirstHost{grid-column:1;grid-row:2;max-height:none;display:flex;flex-direction:column}
+ .hk-product-save-first:has(#hkiaProductWorkspace[hidden]) .hk-shell-external{flex:1;min-height:0}
+ .hk-product-save-first:has(#hkiaProductWorkspace[hidden]) .hk-shell-landing{min-height:0}
+}
+@media(max-width:899px),(max-height:599px){
+ .hk-product-save-first .hk-shell-external{min-height:0}
+ .hk-product-save-first .hk-shell-external .hk-shell-landing{min-height:45dvh}
+ .hk-product-save-first .ach-layout{grid-template-columns:minmax(0,1fr)}
+ .hk-product-save-first .achievement-list{min-height:0;max-height:clamp(200px,45dvh,380px)}
+ .hk-product-save-first .collection-grid{max-height:50dvh;overflow:auto}
+ .hk-product-save-first .file-surface{margin-top:12px}
+}
+
+                                                                                 
+.hk-product-save-first .hk-product-diagnostics{margin-block:8px 0;border:1px solid var(--stroke);border-radius:10px;padding:6px 8px;overflow-wrap:anywhere}
+.hk-product-save-first .hk-product-diagnostics summary{cursor:pointer;min-height:32px;padding:6px 2px;font-size:12px;font-weight:700;color:var(--berrydark)}
+.hk-product-save-first .hk-product-diagnostics summary:focus-visible{outline:3px solid #9e72b5;outline-offset:2px}
+.hk-product-save-first .hk-product-diagnostics:not([open])>div,.hk-product-save-first .hk-product-diagnostics:not([open])>section{display:none}
+.hk-product-save-first #hkiaLocaleScopeDetails[hidden]{display:none!important}
+.hk-product-save-first .hk-product-locale-disclosure{display:block;max-width:100%;min-height:32px;border:1px solid var(--stroke);border-radius:8px;background:white;color:var(--berrydark);padding:4px 8px;margin-top:4px;font-size:12px;font-weight:700;overflow-wrap:anywhere;text-align:start}
+.hk-product-save-first .hk-product-locale-disclosure::after{content:" +";font-weight:700}
+.hk-product-save-first .hk-product-locale-disclosure[aria-expanded="true"]::after{content:" -"}
+.hk-product-save-first:has(#hkiaProductWorkspace[hidden]) .hk-product-locale-disclosure{display:none}
+.hk-product-save-first .file-surface .linked-state-info{margin-block:6px;padding:8px}
+.hk-product-save-first .file-surface .button-row{gap:6px}
+.hk-product-save-first .file-surface .button-row button{padding:8px 10px}
+.hk-product-save-first .file-surface .file-info{margin-top:8px}
+.hk-product-save-first .file-surface .detail-line{padding:4px 0}
+@media(min-width:900px) and (min-height:600px){
+ .hk-product-save-first #hkiaProductWorkspace{grid-template-columns:minmax(0,1fr) minmax(180px,20%)}
+}
