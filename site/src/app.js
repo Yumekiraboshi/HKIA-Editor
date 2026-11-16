@@ -12,23 +12,42 @@ import {fingerprintSourceBytes,sourceRevisionSnapshot,inspectRevisionCAS,capture
 import {bindPrivateImageCatalog,imageUi,imageElement} from './image-ui.js';
 import {createNativePreviewController,collectionTicksRequest,achievementBatchRequest,nativeOutputStatus,recipeForwardRequest,recipeExpansionForwardRequest,RECIPE_EXPANSION_IDS,recipeExpansion23ForwardRequest,RECIPE_EXPANSION23_IDS,recipeCelebration5ForwardRequest,RECIPE_CELEBRATION5_IDS,bulkTargetReason,bulkSelectionSnapshot,familyRevokeReason,familyRevokeRequest,familyBatchRequest,FORMAL_FAMILY_REVOKE_KEYS,formal49Target,formal49Reason,formal49Request,manual9Target,manual9Reason,manual9Request} from './native-preview-ui.js';
 
+import {createFile252ProductPort,file252Role as fileRole,projectFile252Facts,projectNative252Facts,projectSlot252Facts} from './product-locale-root-192.mjs';
 const el=id=>document.getElementById(id);
+let file252Port=null;
+const displayFacts=fn=>{try{return fn();}catch{return null;}};
+                                                                                      
+                                                                              
+function fileWrite(target,receipt,fallback,separator=''){
+ if(!file252Port){target.textContent=fallback;return;}
+ try{file252Port.write(target,receipt,fallback,separator);}catch{                                                            }
+}
+function appendFile(host,tag,cls,receipt,fallback,separator=''){
+ const n=node(tag,cls,fallback);host.append(n);fileWrite(n,receipt,fallback,separator);return n;
+}
+function appendFileDetail(host,label,value,receipt){
+ const row=detailLine(label,value);host.append(row);fileWrite(row.firstChild,receipt?.label??null,label);fileWrite(row.lastChild,receipt?.value??null,value);return row;
+}
+function currentFileFacts(){return displayFacts(()=>projectFile252Facts({hasAccount:!!state.account,hasSlot:!!state.save,dirty:state.dirty,structuralReadOnly:state.slotEvidence?.accountExportAllowed===false,sourceLoading:state.sourceLoading,revisionChanged:state.revisionChanged,archiveLoaded:state.archiveLoaded,zipExportBusy:state.zipExportBusy,sourceLoadEpoch:state.sourceLoadEpoch,revision:state.sourceRevision,revisionError:state.sourceRevisionError,accountCount:state.account?Object.keys(state.account.Achievements).length:0,slotCount:state.save?(state.slotEvidence?.readable.achievement===false?null:state.save.achievements.length):0}));}
+
 const state={account:null,accountOriginal:null,accountBaseline:null,history:[],visibleAccountGuids:[],achLimit:120,save:null,saveOriginal:null,slotEvidence:null,source:'account',originalName:null,originalBytes:null,dirty:false,selectedAchievement:null,selectedCollection:null,selectedCollectionDefinition:null,itemManifest:null,parentManifest:null,collectionMatch:null,parentMatch:null,collectionReadModel:null,collectionHistoryDisplay:null,selectedItemId:null,archiveLoaded:false,sourceRevision:null,sourceRevisionError:null,revisionChanged:false,sourceLoadEpoch:0,sourceLoading:false,accountEditGeneration:0,zipExportBusy:false,collections:[],collectionDefinitions:[],achievementDefinitions:new Map(),slotCounterDefinitions:new Map(),slotAchievementDefinitions:new Map(),localAchievementDefinitions:new Map(),slotGroupMembers:new Map(),slotCountersByGuid:new Map(),slotAchievementsByGuid:new Map(),localAchievementLocales:new Map()};
 const nativePreview=createNativePreviewController({open:async bytes=>{const mod=await import('../native-product/worker-client.mjs');return mod.openNativeProductWorkerSession(bytes);},live:()=>({bytes:state.originalBytes,revision:state.sourceRevision?.sha256,generation:state.accountEditGeneration,name:state.originalName,eligible:!!state.archiveLoaded&&!!state.originalBytes&&!!state.save&&!!state.account&&!state.sourceLoading&&!state.dirty&&state.sourceRevision?.format==='zip'})});
-let nativeNotice='',nativeOpenAttempt=0;
+let nativeNotice='',nativeNoticeFact={kind:'none'},nativeOpenAttempt=0;
+function setNativeNotice(text,kind='raw',reason=text){nativeNotice=text;nativeNoticeFact=!text?{kind:'none'}:kind==='raw'||kind==='exportFailed'?{kind,reason}:{kind};}
 const nativeModuleStaged=()=>document.documentElement.dataset.nativePreview==='staged';
 function closeNativePreviewSession(){nativeOpenAttempt++;nativePreview.close();}
 function renderNativeSession(){
   const host=el('nativeSessionStatus');if(!host)return;let x=nativePreview.status();if(!x.ready&&!x.busy&&x.revision){closeNativePreviewSession();x=nativePreview.status();}host.replaceChildren();
-  host.append(detailLine('Native Preview',x.ready?'Session ready（操作別出力ゲート）':x.busy?'処理中':nativeNotice||(!nativeModuleStaged()?'Native検証モジュール未配置（読取のみ）':'ZIPを選択して検証Sessionを開く')));
-  if(x.ready){host.append(detailLine('Version / Slot',x.version+' / Saves/save_0.save'),detailLine('Revision',x.revision),detailLine('Preview capabilities',x.capability.allowedPreviewOperations.join(' / ')),detailLine('Apply / Export',x.staged?'検証済み候補を出力可能':'BLOCKED — 操作別Capability・独立受入・Verifyが必要'));}
+  const facts=displayFacts(()=>projectNative252Facts({ready:!!x.ready,busy:!!x.busy,moduleStaged:nativeModuleStaged(),notice:nativeNoticeFact,version:x.version??null,revision:x.revision??null,capabilities:x.capability?.allowedPreviewOperations??null,stagedOperation:x.staged?.operation??null}));
+  appendFileDetail(host,'Native Preview',x.ready?'Session ready（操作別出力ゲート）':x.busy?'処理中':nativeNotice||(!nativeModuleStaged()?'Native検証モジュール未配置（読取のみ）':'ZIPを選択して検証Sessionを開く'),facts?{label:facts.label,value:facts.main}:null);
+  if(x.ready){appendFileDetail(host,'Version / Slot',x.version+' / Saves/save_0.save',facts?.details[0]);appendFileDetail(host,'Revision',x.revision,facts?.details[1]);appendFileDetail(host,'Preview capabilities',x.capability.allowedPreviewOperations.join(' / '),facts?.details[2]);appendFileDetail(host,'Apply / Export',x.staged?'検証済み候補を出力可能':'BLOCKED — 操作別Capability・独立受入・Verifyが必要',facts?.details[3]);}
   el('openNativePreview').disabled=!nativeModuleStaged()||x.busy||!state.archiveLoaded||!state.originalBytes||!state.save||!state.account||state.sourceLoading||state.dirty||!state.sourceRevision||x.ready;
   el('closeNativePreview').disabled=!x.ready&&!x.busy;
   el('nativeDownload').disabled=!nativePreview.outputStatus().export;
   el('nativeDiscard').disabled=!nativePreview.outputStatus().export;
-  if(x.staged)host.append(detailLine('検証済み候補',x.staged.operation+' / 未ダウンロード'));
-  if(x.recipeRestore){host.append(detailLine('Recipe復元Receipt','同一Session・この編集済みコピーのみ。ゲーム再保存、別File選択、Session終了、再起動後は復元不可。'),detailLine('復元対象',`ItemId ${x.recipeRestore.itemId} / Document ${x.recipeRestore.documentId} / Quantity 0 → 1`));const c=recipeConsentControls(),restore=node('button','btn-secondary','Recipeを復元して別名出力');restore.type='button';restore.disabled=true;const update=()=>{restore.disabled=!x.recipeRestore.available||!c.accepted();};c.first.addEventListener('change',update);c.second.addEventListener('change',update);restore.addEventListener('click',async()=>{if(restore.disabled)return;const attempt=nativeOpenAttempt,epoch=state.sourceLoadEpoch;try{const pending=nativePreview.restoreRecipe(c.value());renderNativeSession();const file=await pending;if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch||!nativePreview.status().ready)return;offerFile(file,'recipe-restored.zip','application/zip');nativeNotice='Recipe復元済みコピーを別名出力。ゲーム受入は未確認。';}catch(e){if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch)return;nativeNotice='復元失敗・出力なし：'+e.message;}renderNativeSession();renderCollections();});host.append(c.box,restore);}
-  if(nativeNotice&&x.ready)host.append(node('p','editor-hint',nativeNotice));
+  if(x.staged){const row=detailLine('検証済み候補',x.staged.operation+' / 未ダウンロード');host.append(row);fileWrite(row.firstChild,facts?.staged?.label??null,'検証済み候補');fileWrite(row.lastChild,facts?.staged?[facts.staged.operation,facts.staged.status]:null,x.staged.operation+' / 未ダウンロード',' / ');}
+  if(x.recipeRestore){host.append(detailLine('Recipe復元Receipt','同一Session・この編集済みコピーのみ。ゲーム再保存、別File選択、Session終了、再起動後は復元不可。'),detailLine('復元対象',`ItemId ${x.recipeRestore.itemId} / Document ${x.recipeRestore.documentId} / Quantity 0 → 1`));const c=recipeConsentControls(),restore=node('button','btn-secondary','Recipeを復元して別名出力');restore.type='button';restore.disabled=true;const update=()=>{restore.disabled=!x.recipeRestore.available||!c.accepted();};c.first.addEventListener('change',update);c.second.addEventListener('change',update);restore.addEventListener('click',async()=>{if(restore.disabled)return;const attempt=nativeOpenAttempt,epoch=state.sourceLoadEpoch;try{const pending=nativePreview.restoreRecipe(c.value());renderNativeSession();const file=await pending;if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch||!nativePreview.status().ready)return;offerFile(file,'recipe-restored.zip','application/zip');setNativeNotice('Recipe復元済みコピーを別名出力。ゲーム受入は未確認。');}catch(e){if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch)return;setNativeNotice('復元失敗・出力なし：'+e.message);}renderNativeSession();renderCollections();});host.append(c.box,restore);}
+  if(nativeNotice&&x.ready)appendFile(host,'p','editor-hint',facts?.notice??null,nativeNotice);
 }
 function adoptNativeDisplay(){
   const view=nativePreview.status().display;if(!view||view.schema!=='HKIA.Web05.SlotDisplay.2'||view.evidence?.accountExportAllowed!==false||view.evidence?.writerEnabled!==false||view.nativeSchemaEvidence?.typedDictionaryKeysVerified!==true)throw Error('UNACCEPTED_NATIVE_DISPLAY');
@@ -112,17 +131,18 @@ function renderSourceRevision(){
   const host=el('sourceRevisionNotice');host.replaceChildren();
   host.hidden=!(state.sourceRevision||state.sourceRevisionError||state.sourceLoading||state.revisionChanged);
   if(host.hidden)return;
-  host.append(node('strong','',state.sourceLoading?'Source revision 確認中・編集レビュー無効':
-    state.sourceRevision?'Source revision：ローカルSHA-256観測済み（Native CAS未実行）':'Source revision：UNKNOWN'));
+  const facts=currentFileFacts(), receipts=new Map((facts?.revision??[]).map(r=>[r.key,r]));
+  const heading=state.sourceLoading?'revision.checking':state.sourceRevision?'revision.observed':'revision.unknown';
+  appendFile(host,'strong','',receipts.get(heading)??null,state.sourceLoading?'Source revision 確認中・編集レビュー無効':state.sourceRevision?'Source revision：ローカルSHA-256観測済み（Native CAS未実行）':'Source revision：UNKNOWN');
   if(state.sourceRevision){
     const revision=state.sourceRevision;
-    host.append(node('p','',`入力形式 ${revision.format} / SHA-256 ${revision.sha256.slice(0,16)}… / 読込世代 ${revision.epoch}`));
+    appendFile(host,'p','',receipts.get('revision.inputDetail')??null,`入力形式 ${revision.format} / SHA-256 ${revision.sha256.slice(0,16)}… / 読込世代 ${revision.epoch}`);
     const status=inspectRevisionCAS({expected:revision,current:revision,readEvidence:state.slotEvidence});
-    host.append(node('p','',`UIスナップショット照合 ${status.status}。研究用CAS証拠≠実適用許可。Native Apply/Exportは禁止。`));
+    appendFile(host,'p','',status.status==='LOCAL_SNAPSHOT_MATCH_ONLY'?(receipts.get('revision.snapshotNotice')??null):null,`UIスナップショット照合 ${status.status}。研究用CAS証拠≠実適用許可。Native Apply/Exportは禁止。`);
   }
-  if(state.revisionChanged)host.append(node('p','error-message','SOURCE_REVISION_MISMATCH：前回と異なるファイルを選択しました。旧プレビューは破棄済みです。現在の入力から再作成してください。'));
-  if(state.sourceRevisionError)host.append(node('p','error-message',`SOURCE_REVISION_UNKNOWN：${state.sourceRevisionError}。Native CAS状態を検証できません。`));
-  host.append(node('p','editor-hint','読み込んだバイト列のみの比較です。ディスク上の同時変更やゲーム側での変更を監視せず、Native Writerの整合性・受入を証明しません。'));
+  if(state.revisionChanged)appendFile(host,'p','error-message',receipts.get('revision.fileChanged')??null,'SOURCE_REVISION_MISMATCH：前回と異なるファイルを選択しました。旧プレビューは破棄済みです。現在の入力から再作成してください。');
+  if(state.sourceRevisionError)appendFile(host,'p','error-message',receipts.get('revision.unknownReason')??null,`SOURCE_REVISION_UNKNOWN：${state.sourceRevisionError}。Native CAS状態を検証できません。`);
+  appendFile(host,'p','editor-hint',receipts.get('revision.comparisonScope')??null,'読み込んだバイト列のみの比較です。ディスク上の同時変更やゲーム側での変更を監視せず、Native Writerの整合性・受入を証明しません。');
 }
 function nativePreviewBinding(domain){
   if(!state.sourceRevision)return null;
@@ -142,11 +162,13 @@ async function inspectLivePreview(binding){
 }
 function appendCASReadOnly(host,result){
   const status=result.status==='SOURCE_REVISION_MISMATCH'?'SOURCE_REVISION_CAS_MISMATCH：旧プレビューは無効':result.status==='REVISION_UNKNOWN'?'SOURCE_REVISION_UNKNOWN：照合不能':'UIスナップショット一致（Native CAS未実行）';
-  host.append(node('p',result.stale||result.status==='REVISION_UNKNOWN'?'error-message':'editor-hint',status));
-  host.append(node('p','error-message',`Native Apply/Export OFF：${result.blockers.join(' / ')}`));
+  const key=result.status==='SOURCE_REVISION_MISMATCH'?'revision.casMismatch':result.status==='REVISION_UNKNOWN'?'revision.casUnknown':'revision.casLocalMatch';
+                                                                                 
+  const a=node('p',result.stale||result.status==='REVISION_UNKNOWN'?'error-message':'editor-hint',status),b=node('p','error-message',`Native Apply/Export OFF：${result.blockers.join(' / ')}`);host.append(a,b);
+  if(host.isConnected){fileWrite(a,fileRole(key),status);fileWrite(b,fileRole('revision.nativeOff',{blockers:result.blockers.join(' / ')}),b.textContent);}
 }
 function downloadOriginal(){if(state.originalBytes)offerFile(state.originalBytes,state.originalName||'original-backup.bin');}
-function downloadAccount(){if(!state.account||state.slotEvidence?.accountExportAllowed===false){error('構造読取専用のSave slotを含むため、編集済みAccountの出力を禁止しています。');return;}try{offerFile(exportAccount(state.account),'settings_edited.json','application/json');setStatus();}catch(e){error(e.message);}}
+function downloadAccount(){if(!state.account||state.slotEvidence?.accountExportAllowed===false){error('構造読取専用のSave slotを含むため、編集済みAccountの出力を禁止しています。',fileRole('file.accountExportBlocked'));return;}try{offerFile(exportAccount(state.account),'settings_edited.json','application/json');setStatus();}catch(e){error(e.message);}}
 async function downloadEditedArchive(){
   if(state.zipExportBusy||!state.account||!state.dirty||!state.archiveLoaded||state.slotEvidence?.accountExportAllowed===false)return;
   let binding;
@@ -156,17 +178,17 @@ async function downloadEditedArchive(){
     const before=inspectAccountZipExport({binding,current:state});
     if(!before.allowed)throw new Error(before.blockers.join(' / '));
     state.zipExportBusy=true;
-    clearError();el('downloadZip').textContent='ZIPを検証・生成中…';setStatus();
+    clearError();setStatus();
     const archive=await repackSettingsZip(binding.originalBytes,editedAccount);
     const sha256=await fingerprintSourceBytes(binding.originalBytes);
     const after=inspectAccountZipExport({binding,current:state,verifiedSha256:sha256});
     if(!after.allowed)throw new Error('ACCOUNT_ZIP_EXPORT_CAS_ABORTED：'+after.blockers.join(' / '));
     offerFile(archive,binding.originalName.replace(/\.zip$/i,'')+'_edited.zip','application/zip');
-  }catch(e){error('編集済みZIPの出力を中止：'+e.message);}finally{
-    state.zipExportBusy=false;el('downloadZip').textContent='編集したZIPを保存';setStatus();
+  }catch(e){error('編集済みZIPの出力を中止：'+e.message,fileRole('file.zipExportFailed',{reason:e.message}));}finally{
+    state.zipExportBusy=false;setStatus();
   }
 }
-function setStatus(){let n=state.account&&state.save?'Account + Save slot':state.account?'Account JSON':state.save?'Save slot':'未読み込み';const block=state.slotEvidence?.accountExportAllowed===false||state.sourceLoading||state.revisionChanged&&state.sourceRevision===null;el('fileStatus').textContent=n+(state.dirty?' • 未保存の変更':'')+(block?' • 構造READ ONLY':'');el('downloadEdited').disabled=!state.account||!state.dirty||block;el('downloadZip').hidden=!state.archiveLoaded;el('downloadZip').disabled=!state.archiveLoaded||!state.account||!state.dirty||block||!state.sourceRevision||state.sourceRevision.format!=='zip'||state.zipExportBusy;}
+function setStatus(){let n=state.account&&state.save?'Account + Save slot':state.account?'Account JSON':state.save?'Save slot':'未読み込み';const block=state.slotEvidence?.accountExportAllowed===false||state.sourceLoading||state.revisionChanged&&state.sourceRevision===null;const facts=currentFileFacts();fileWrite(el('fileStatus'),facts?.fileStatus??null,n+(state.dirty?' • 未保存の変更':'')+(block?' • 構造READ ONLY':''),' • ');fileWrite(el('downloadZip'),facts?.zipLabel??null,state.zipExportBusy?'ZIPを検証・生成中…':'編集したZIPを保存');el('downloadEdited').disabled=!state.account||!state.dirty||block;el('downloadZip').hidden=!state.archiveLoaded;el('downloadZip').disabled=!state.archiveLoaded||!state.account||!state.dirty||block||!state.sourceRevision||state.sourceRevision.format!=='zip'||state.zipExportBusy;}
 function displayValue(value){return value===null?'未設定':typeof value==='boolean'?(value?'達成済み':'未達成'):String(value);}
 function refreshAccountDirty(){
   state.dirty=Boolean(state.accountBaseline&&accountChangeSet(state.accountBaseline,state.account).length);
@@ -224,22 +246,25 @@ function renderReview(target,edits,onApply){
   },{once:true});cancel.addEventListener('click',()=>target.replaceChildren());
   controls.append(apply,cancel);box.append(controls);target.append(box);
 }
-function error(message){const e=el('loadError');e.hidden=false;e.textContent=String(message||'不明なエラー');}
-function clearError(){el('loadError').hidden=true;el('loadError').textContent='';}
-function showInfo(){const a=state.account?Object.keys(state.account.Achievements).length:0;const s=state.slotEvidence?.readable.achievement===false?'UNKNOWN（Domain認識不可）':state.save?.achievements.length??0;el('fileInfo').hidden=false;el('loadDescription').textContent=`読み込み完了：Account実績 ${a}件、Save slot実績 ${s}。保存ファイルは端末外へ送信しません。`;
-  const h=state.save?.meta?.header;
-  if(h)el('loadDescription').textContent+=` SaveGameV2: ${h.applicationVersion}（内部番号${h.applicationVersionInt}）、${h.platform}、先祖履歴${h.ancestorCount}件、メタデータ${h.metadataEntryCount}件を型付き照合済み。先頭32バイトの認証・改ざん検知は未検証です。`;
+function error(message,receipt=null){const e=el('loadError');e.hidden=false;fileWrite(e,receipt,String(message||'不明なエラー'));}
+function clearError(){el('loadError').hidden=true;fileWrite(el('loadError'),null,'');}
+function showInfo(){const a=state.account?Object.keys(state.account.Achievements).length:0;const s=state.slotEvidence?.readable.achievement===false?'UNKNOWN（Domain認識不可）':state.save?.achievements.length??0;el('fileInfo').hidden=false;let summary=`読み込み完了：Account実績 ${a}件、Save slot実績 ${s}。保存ファイルは端末外へ送信しません。`;
+  const h=state.save?.meta?.header,ev=state.slotEvidence;
+  if(h)summary+=` SaveGameV2: ${h.applicationVersion}（内部番号${h.applicationVersionInt}）、${h.platform}、先祖履歴${h.ancestorCount}件、メタデータ${h.metadataEntryCount}件を型付き照合済み。先頭32バイトの認証・改ざん検知は未検証です。`;
+  const slotFacts=displayFacts(()=>projectSlot252Facts({header:h?{version:h.applicationVersion,versionInt:h.applicationVersionInt,platform:h.platform,ancestorCount:h.ancestorCount,metadataCount:h.metadataEntryCount}:null,slot:ev?{mode:ev.mode,version:ev.version,readable:{achievement:ev.readable.achievement,counter:ev.readable.counter,'collection-history':ev.readable['collection-history']},extraFields:{achievement:ev.extraFields.achievement,counter:ev.extraFields.counter},unknownUnionCount:ev.unknownUnionTokens,warnings:ev.warnings}:null}));
+  const loaded=currentFileFacts()?.loaded??null;
+  fileWrite(el('loadDescription'),loaded&&(!h||slotFacts?.header)?[loaded,...(h?[slotFacts.header]:[])]:null,summary,' ');
   const notice=el('slotReadNotice');notice.hidden=!state.slotEvidence;
-  if(state.slotEvidence){const ev=state.slotEvidence;notice.replaceChildren();
-    notice.append(node('strong','',ev.mode==='STRUCTURAL_READ_ONLY'?'STRUCTURAL READ ONLY（保存・出力禁止）':'既知バージョンの読取（Native Writer OFF）'),
-      node('p','',`Version ${ev.version} ／ Achievement ${structuralDomainMessage(ev,'achievement')} ／ Counter ${structuralDomainMessage(ev,'counter')} ／ CollectionHistory ${structuralDomainMessage(ev,'collection-history')}`));
-    if(ev.mode==='STRUCTURAL_READ_ONLY')notice.append(node('p','','未検証構造の追加Unionフィールド Achievement '+(ev.extraFields.achievement??'UNKNOWN')+'件 / Counter '+(ev.extraFields.counter??'UNKNOWN')+'件、未知Union '+ev.unknownUnionTokens+'件。原本を保持し、未知部分の消去・初期化・書戻しを禁止します。v3.0.1の名称とカテゴリは参考照合です。'));
+  if(ev){notice.replaceChildren();const sf=slotFacts?.slot;
+    appendFile(notice,'strong','',sf?.mode??null,ev.mode==='STRUCTURAL_READ_ONLY'?'STRUCTURAL READ ONLY（保存・出力禁止）':'既知バージョンの読取（Native Writer OFF）');
+    appendFile(notice,'p','',sf?fileRole('file.slotDomainSummary',{version:sf.version,achievement:sf.domains.achievement,counter:sf.domains.counter,collectionHistory:sf.domains['collection-history']}):null,`Version ${ev.version} ／ Achievement ${structuralDomainMessage(ev,'achievement')} ／ Counter ${structuralDomainMessage(ev,'counter')} ／ CollectionHistory ${structuralDomainMessage(ev,'collection-history')}`);
+    if(ev.mode==='STRUCTURAL_READ_ONLY')appendFile(notice,'p','',sf?.opaqueWarning??null,'未検証構造の追加Unionフィールド Achievement '+(ev.extraFields.achievement??'UNKNOWN')+'件 / Counter '+(ev.extraFields.counter??'UNKNOWN')+'件、未知Union '+ev.unknownUnionTokens+'件。原本を保持し、未知部分の消去・初期化・書戻しを禁止します。v3.0.1の名称とカテゴリは参考照合です。');
     for(const warning of ev.warnings)notice.append(node('small','',warning+' '));
   }
   setStatus();}
 async function loadFile(file){
   clearError();if(!file)return;
-  closeNativePreviewSession();nativeNotice="";
+  closeNativePreviewSession();setNativeNotice('');
   const prior=state.sourceRevision;
   const epoch=++state.sourceLoadEpoch;
   state.accountEditGeneration++;
@@ -251,7 +276,7 @@ async function loadFile(file){
   state.originalBytes=null;state.archiveLoaded=false;state.dirty=false;state.selectedAchievement=null;
   state.selectedItemId=null;state.selectedCollection=null;state.selectedCollectionDefinition=null;
   el('fileInfo').hidden=true;clearPreviousPreview();setStatus();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();
-  if(file.size>60*1024*1024){state.sourceLoading=false;state.sourceRevisionError='60MBを超えるファイルは未対応です';setStatus();renderSourceRevision();error(state.sourceRevisionError);return;}
+  if(file.size>60*1024*1024){state.sourceLoading=false;state.sourceRevisionError='60MBを超えるファイルは未対応です';setStatus();renderSourceRevision();error(state.sourceRevisionError,fileRole('file.tooLarge'));return;}
   let bytes;
   try{bytes=new Uint8Array(await file.arrayBuffer());}
   catch(e){if(epoch!==state.sourceLoadEpoch)return;state.sourceLoading=false;state.sourceRevisionError='ファイルを読み込めません';setStatus();renderSourceRevision();error(e.message);return;}
@@ -260,13 +285,13 @@ async function loadFile(file){
   try{nextRevision=sourceRevisionSnapshot({sha256:await fingerprintSourceBytes(bytes),epoch,format:currentFormat(file.name)});}
   catch(e){revisionError=e.message;}
   if(epoch!==state.sourceLoadEpoch)return;
-  let accountBytes=null,saveBytes=null;
+  let accountBytes=null,saveBytes=null,loadFailureRole=null;
   try{
     if(file.name.toLowerCase().endsWith('.zip')){
       const set=await extractSaveSet(bytes);accountBytes=set.account;saveBytes=set.save;
     }else if(file.name.toLowerCase().endsWith('.json')) accountBytes=bytes;
     else if(/\.(save|bak|lbak)$/i.test(file.name))saveBytes=bytes;
-    else throw new Error('対応ファイルはZIP、settings.json、.save、.bak、.lbakです');
+    else {loadFailureRole=fileRole('file.unsupportedFormats');throw new Error('対応ファイルはZIP、settings.json、.save、.bak、.lbakです');}
     const account=accountBytes?parseAccount(accountBytes):null;
     const slot=saveBytes?readSlotForDisplay(saveBytes):null;
     const save=slot?.save??null;
@@ -284,7 +309,7 @@ async function loadFile(file){
     for(const id of ['achievementSearch','collectionSearch'])el(id).value='';for(const id of ['achievementFilter','achievementImageFilter','collectionStatusFilter'])el(id).value='all';
     state.source=account?'account':'slot';state.visibleAccountGuids=[];state.achLimit=120;el('batchResult').replaceChildren();state.dirty=false;state.selectedAchievement=null;state.selectedCollectionDefinition=null;state.selectedItemId=null;
     showInfo();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();
-  }catch(e){if(epoch!==state.sourceLoadEpoch)return;state.sourceLoading=false;state.sourceRevision=null;state.sourceRevisionError='読み込み失敗。前のプレビューは無効です';state.originalBytes=null;state.archiveLoaded=false;state.account=null;state.accountBaseline=null;state.save=null;state.slotEvidence=null;state.dirty=false;el('fileInfo').hidden=true;setStatus();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();error(`読み込み失敗：${e.message}`);}
+  }catch(e){if(epoch!==state.sourceLoadEpoch)return;state.sourceLoading=false;state.sourceRevision=null;state.sourceRevisionError='読み込み失敗。前のプレビューは無効です';state.originalBytes=null;state.archiveLoaded=false;state.account=null;state.accountBaseline=null;state.save=null;state.slotEvidence=null;state.dirty=false;el('fileInfo').hidden=true;setStatus();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();error(`読み込み失敗：${e.message}`,loadFailureRole??fileRole('file.loadFailedReason',{reason:e.message}));}
 }
 function achievements(){
   if(state.source==='account')return Object.entries(state.account?.Achievements||{}).map(([guid,r])=>({id:guid,guid,complete:r.IsComplete,current:r.CurrentValue,completed:r.CompletedTime,kind:'account',sourceKnown:state.achievementDefinitions.has(guid.toLowerCase())}));
@@ -748,6 +773,8 @@ function renderUnknownCollectionIds(){
   };query.addEventListener('input',render);render();
 }
 async function bootstrap(){
+  try{file252Port=createFile252ProductPort(document);}catch{file252Port=null;}
+  setStatus();
   try{
     const [a,b,c,d,e,f,g,h]=await Promise.all(['./data/collections.json','./data/collection-definitions.json','./data/achievement-definitions.json','./data/slot-definitions.json','./data/item-collection-crosswalk.json','./data/item-parent-crosswalk.json','./data/local-achievement-definitions.json','./data/local-achievement-locales.json'].map(async url=>{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('リソースの取得に失敗: '+url);return r.json();}));
     if(a.length!==25||b.length!==181||c.length!==31||d.schema!=='HKIA.SlotDefinitionCrosswalk.1'||d.counters.length!==851||d.achievement_references.length!==820||e.schema!=='HKIA.ItemCollectionCrosswalk.1'||e.items.length!==12163||f.schema!=='HKIA.ItemParentCrosswalk.1'||f.links.length!==5170||g.schema!=='HKIA.LocalAchievementIndex.1'||g.records.length!==820||h.schema!=='HKIA.LocalAchievementLocales.1'||h.records.length!==820||h.counts.ja_titles!==820||h.counts.en_titles!==820)throw new Error('同梱定義データの件数が一致しません');
@@ -772,10 +799,10 @@ async function bootstrap(){
     try{const {createProductCollectionItems}=await import('./product-collection-items.mjs');productCollectionItems=createProductCollectionItems(document);const {createProductCollectionItemsLocalePort}=await import('./product-collection-items-locale-port.mjs');productCollectionItemsLocale=createProductCollectionItemsLocalePort(document);}catch{}
     renderAchievements();renderCollections();
   }catch(e){error(`同梱アセット読み込み失敗：${e.message}。ローカル表示はHTTPサーバー経由で開いてください。`);}
-  el('openNativePreview').addEventListener('click',async()=>{nativeNotice='';const epoch=state.sourceLoadEpoch,attempt=++nativeOpenAttempt;if(!nativeModuleStaged())return;const pending=nativePreview.connect();renderNativeSession();try{await pending;if(epoch!==state.sourceLoadEpoch||attempt!==nativeOpenAttempt)return;adoptNativeDisplay();nativeNotice='';}catch(e){if(epoch!==state.sourceLoadEpoch||attempt!==nativeOpenAttempt)return;closeNativePreviewSession();nativeNotice=e.message;}renderNativeSession();renderAchievements();renderCollections();});
-  el('closeNativePreview').addEventListener('click',()=>{closeNativePreviewSession();nativeNotice='Session closed / previews discarded';renderNativeSession();renderAchievements();renderCollections();});
-  el('nativeDownload').addEventListener('click',async()=>{if(!nativePreview.outputStatus().export)return;const attempt=nativeOpenAttempt,epoch=state.sourceLoadEpoch;try{const pending=nativePreview.exportCopy();renderNativeSession();const file=await pending;if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch||!nativePreview.status().ready)return;offerFile(file,'edited-copy.zip','application/zip');nativeNotice='別名コピー出力済み。再読込して確認してください。';}catch(e){if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch)return;nativeNotice='出力失敗・候補破棄：'+e.message;}renderNativeSession();renderAchievements();renderCollections();});
-  el('nativeDiscard').addEventListener('click',async()=>{if(!nativePreview.outputStatus().export)return;const attempt=nativeOpenAttempt;try{const pending=nativePreview.discardStaged();renderNativeSession();await pending;if(attempt!==nativeOpenAttempt)return;nativeNotice='候補を破棄しました。原本不変。';}catch(e){if(attempt!==nativeOpenAttempt)return;nativeNotice=e.message;}renderNativeSession();renderAchievements();renderCollections();});
+  el('openNativePreview').addEventListener('click',async()=>{setNativeNotice('');const epoch=state.sourceLoadEpoch,attempt=++nativeOpenAttempt;if(!nativeModuleStaged())return;const pending=nativePreview.connect();renderNativeSession();try{await pending;if(epoch!==state.sourceLoadEpoch||attempt!==nativeOpenAttempt)return;adoptNativeDisplay();setNativeNotice('');}catch(e){if(epoch!==state.sourceLoadEpoch||attempt!==nativeOpenAttempt)return;closeNativePreviewSession();setNativeNotice(e.message);}renderNativeSession();renderAchievements();renderCollections();});
+  el('closeNativePreview').addEventListener('click',()=>{closeNativePreviewSession();setNativeNotice('Session closed / previews discarded','closed');renderNativeSession();renderAchievements();renderCollections();});
+  el('nativeDownload').addEventListener('click',async()=>{if(!nativePreview.outputStatus().export)return;const attempt=nativeOpenAttempt,epoch=state.sourceLoadEpoch;try{const pending=nativePreview.exportCopy();renderNativeSession();const file=await pending;if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch||!nativePreview.status().ready)return;offerFile(file,'edited-copy.zip','application/zip');setNativeNotice('別名コピー出力済み。再読込して確認してください。','exported');}catch(e){if(attempt!==nativeOpenAttempt||epoch!==state.sourceLoadEpoch)return;setNativeNotice('出力失敗・候補破棄：'+e.message,'exportFailed',e.message);}renderNativeSession();renderAchievements();renderCollections();});
+  el('nativeDiscard').addEventListener('click',async()=>{if(!nativePreview.outputStatus().export)return;const attempt=nativeOpenAttempt;try{const pending=nativePreview.discardStaged();renderNativeSession();await pending;if(attempt!==nativeOpenAttempt)return;setNativeNotice('候補を破棄しました。原本不変。','discarded');}catch(e){if(attempt!==nativeOpenAttempt)return;setNativeNotice(e.message);}renderNativeSession();renderAchievements();renderCollections();});
   renderNativeSession();
   el('achTab').addEventListener('click',()=>setTab('achievements'));el('colTab').addEventListener('click',()=>setTab('collections'));
   for(const name of ['achTab','colTab'])el(name).addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const next=ev.key==='Home'?'achTab':ev.key==='End'?'colTab':name==='achTab'?'colTab':'achTab';setTab(next==='colTab'?'collections':'achievements');el(next).focus();}});
@@ -814,6 +841,6 @@ async function bootstrap(){
   try{const {mountProductFilters}=await import('./product-filters.mjs');mountProductFilters(document,{achievement:onAchievementsFilter,collection:renderCollections},()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
   renderAchievements();
   try{const {mountProductTabs}=await import('./product-tabs.mjs');mountProductTabs(document,setTab,()=>productLocaleRoot?.readFilterLocale()??null);}catch{}
-  try{const {startProductLocaleRoot192}=await import('./product-locale-root-192-boot.mjs');productLocaleRoot=startProductLocaleRoot192(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale,productAchievementListLocale);}catch{const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
+  try{const {startProductLocaleRoot252}=await import('./product-locale-root-192-boot.mjs');if(!file252Port)throw Error('FILE252_PORT_UNAVAILABLE');productLocaleRoot=startProductLocaleRoot252(productLocaleHeaderSnapshot,{verifyCategoryCatalog:productCategoryLocaleVerifier,paintLocale:locale=>productCategoryBridge.paintLocale(locale)},productCollectionItemsLocale,productAchievementListLocale,file252Port);}catch{const host=el('hkiaLocaleChrome');if(host)host.hidden=true;}
 }
 bootstrap();

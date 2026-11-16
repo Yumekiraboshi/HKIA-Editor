@@ -85,3 +85,10 @@ button:disabled{opacity:.58;cursor:not-allowed}
 
 .native-product-panel,.native-collection-bulk,#nativeSessionStatus,#attributionNotice{min-width:0;overflow-wrap:anywhere}.native-product-panel input,.native-product-panel select{min-width:0;max-width:100%}.native-product-panel .button-row button{white-space:normal;max-width:100%}#attributionNotice h2{font-size:14px;margin:10px 0 4px}#attributionNotice p{margin:5px 0}.native-product-panel{margin:12px 0}
 .bulk-target-picker{min-width:0;overflow-wrap:anywhere;margin:12px 0}.bulk-target-picker h5{margin:0 0 8px}.bulk-target-picker .button-row button{white-space:normal;max-width:100%}.bulk-target-list{max-height:300px;overflow:auto;border:1px solid var(--stroke);border-radius:10px;background:#fff}.bulk-target-row{display:flex;align-items:flex-start;gap:9px;padding:9px;border-bottom:1px solid var(--stroke);font-size:12px;overflow-wrap:anywhere;min-width:0}.bulk-target-row input{flex:none;width:17px;height:17px;accent-color:#855374}.bulk-target-row span{min-width:0}.bulk-target-picker .editor-field select{min-width:0;max-width:100%}
+
+                                                                              
+.file-surface,.file-surface .drop-area,.file-surface .linked-state-info,.file-surface .file-info,.file-surface .button-row{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.file-surface .drop-area>*{min-width:0;max-width:100%}
+.file-surface .choose-file,.file-surface .button-row button{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
+.file-surface .file-heading{gap:8px;flex-wrap:wrap}
+.file-surface .file-heading h3{min-width:0;overflow-wrap:anywhere}
