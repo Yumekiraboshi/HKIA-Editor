@@ -262,8 +262,11 @@ function showInfo(){const a=state.account?Object.keys(state.account.Achievements
     for(const warning of ev.warnings)notice.append(node('small','',warning+' '));
   }
   setStatus();}
+const replacementDirtyMessages=Object.freeze({"de":["Es gibt noch nicht exportierte Änderungen","Änderungen verwerfen und fortfahren?"],"en":["You have changes that have not been exported","Discard the changes and continue?"],"en-GB":["You have changes that have not been exported","Discard the changes and continue?"],"es":["Hay cambios que aún no se han exportado","¿Descartar los cambios y continuar?"],"fr":["Des modifications n’ont pas encore été exportées","Abandonner les modifications et continuer ?"],"fr-CA":["Des modifications n’ont pas encore été exportées","Abandonner les modifications et continuer?"],"it":["Ci sono modifiche non ancora esportate","Scartare le modifiche e continuare?"],"ja":["未出力の変更があります","変更を破棄して続けますか？"],"ko":["아직 내보내지 않은 변경 사항이 있습니다","변경 사항을 버리고 계속할까요?"],"nl":["Er zijn wijzigingen die nog niet zijn geëxporteerd","Wijzigingen verwerpen en doorgaan?"],"pt-BR":["Há alterações que ainda não foram exportadas","Descartar as alterações e continuar?"],"ru":["Есть ещё не экспортированные изменения","Отбросить изменения и продолжить?"],"tr":["Henüz dışa aktarılmamış değişiklikler var","Değişiklikler atılsın ve devam edilsin mi?"],"zh-Hans":["有尚未导出的更改","放弃更改并继续吗？"],"zh-Hant":["有尚未匯出的變更","捨棄變更並繼續嗎？"]});
 async function loadFile(file){
-  clearError();if(!file)return;
+  if(!file)return;
+  if(state.dirty){const locale=document.querySelector('[data-hkia-locale-chrome]')?.getAttribute('data-hkia-locale-chrome');const message=Object.hasOwn(replacementDirtyMessages,locale)?replacementDirtyMessages[locale]:replacementDirtyMessages.en;if(!window.confirm(message.join('\n\n')))return;}
+  clearError();
   closeNativePreviewSession();setNativeNotice('');
   const prior=state.sourceRevision;
   const epoch=++state.sourceLoadEpoch;
