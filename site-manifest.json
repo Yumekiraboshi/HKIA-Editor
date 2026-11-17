@@ -5,7 +5,7 @@
   "sourceSha256": "d2292444f7556f44f172478f3986b9776e945884c5cd43f85db77c6d80de5611",
   "baseArtifactManifestSha256": "df4b1fa94bd3e25a81b56cc2a03f6e8b31a652a17ede96225fea311cc0ed61d8",
   "entries": 4209,
-  "bytes": 147989454,
+  "bytes": 147989202,
   "webp": 4076,
   "modules": 71,
   "modifiedPaths": [
@@ -16859,8 +16859,8 @@
       "sha256": "c6258572b903ff44e88438ebf85f85dded7a123b4b719be2be8e150391f8e7d7"
     },
     "src/style.css": {
-      "bytes": 28429,
-      "sha256": "4fbc44d050ce5ef795839c3f0a861cf5d23968473093eafe42355e363e6878c5"
+      "bytes": 28177,
+      "sha256": "ecdefa90f18f77d35d9e08f85dc913864b31949d9cb5f3cf9c537ecc079224be"
     },
     "src/ui-state.js": {
       "bytes": 13916,

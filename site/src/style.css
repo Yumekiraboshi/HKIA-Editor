@@ -174,7 +174,6 @@ button:disabled{opacity:.58;cursor:not-allowed}
  .hk-product-save-first #hkiaProductWorkspace{grid-template-columns:minmax(0,1fr) minmax(180px,20%)}
 }
 
-/* Clearly bounded Writer-OFF test-page disclosure, not operation activation. */
 .hk-product-save-first .hkia-test-notice{display:flex;align-items:center;flex-wrap:wrap;gap:5px 9px;margin:3px 0;padding:6px 10px;border:1px solid #ad7c42;border-radius:9px;background:#fff6df;color:#593d1f;min-width:0;line-height:1.4}
 .hk-product-save-first .hkia-test-notice strong{font-size:12px;white-space:nowrap}
 .hk-product-save-first .hkia-test-notice span{font-size:11px;overflow-wrap:anywhere}
@@ -184,11 +183,9 @@ button:disabled{opacity:.58;cursor:not-allowed}
   .hk-product-save-first .hkia-test-notice{grid-row:1}
   .hk-product-save-first main{grid-row:2}
   .hk-product-save-first>footer{grid-row:3}
-  /* Reclaim the TEST banner's vertical footprint without hiding either warning. */
   .hk-product-save-first .hkia-test-notice{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:0 8px;margin:0;padding:2px 8px;line-height:1.25}
   .hk-product-save-first .hkia-test-notice span{min-width:0;line-height:1.25}
 }
 @media(min-width:900px) and (min-height:600px) and (max-height:650px){
-  /* The existing loaded host is scrollable; reserve space for record/detail panes. */
   .hk-product-save-first #hkiaSaveFirstHost,.hk-product-save-first #hkiaLocaleChrome{max-height:27dvh}
 }
