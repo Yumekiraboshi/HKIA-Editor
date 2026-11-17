@@ -17,7 +17,11 @@
     <div class="identity"><div class="identity-mark" aria-hidden="true">✦</div><div><div class="eyebrow">Unofficial • HKIA Save Tools</div><h1>Achievements &amp; Collections</h1></div></div>
     <div class="privacy-mark" title="セーブの内容はブラウザー内のみで処理します">🔒 Local-only</div>
   </header>
-  <main>
+  <aside id="hkiaTestNotice" class="hkia-test-notice" role="note" aria-labelledby="hkiaTestNoticeTitle">
+      <strong id="hkiaTestNoticeTitle">TEST / 開発中・未完成</strong>
+      <span>編集・出力されたテスト用セーブは破損し、ゲームで読み込めない場合があります。元のセーブを変更せず保管してください。 / Experimental output may be invalid or unreadable by the game. Keep an untouched original.</span>
+    </aside>
+    <main>
     <section class="intro" hidden inert>
       <div><p class="section-kicker">LOCAL PREVIEW • V0.2</p><h2>アチーブメントとコレクションを<br class="desktop-break">1か所で管理</h2><p>タブは分離しています。ゲーム由来のアイコン・名称の権利は各権利者に帰属します。ファイルはサーバーに送信しません。</p></div>
       <div class="support-badge"><b>v3.0.0 / v3.0.1</b><small>Switch save (read-only)<br>Account JSON (editable)</small></div>
@@ -70,6 +74,9 @@
       </section>
     </section>
     <section class="file-surface" aria-labelledby="upload-heading">
+      <p id="hkiaTestOutputNotice" class="hkia-test-output-notice" role="note">
+        TEST / 未完成 — 出力を試す場合は別のコピーを使用してください。ゲームでの利用可否は未検証です。 / Test only on disposable copies; game compatibility is unverified.
+      </p>
       <div class="file-heading"><h3 id="upload-heading">セーブファイル</h3><span id="fileStatus" class="file-pill">未読み込み</span></div>
       <div id="dropArea" class="drop-area" hidden inert>
         <div class="drop-icon" aria-hidden="true">⇧</div>

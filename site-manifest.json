@@ -1,11 +1,11 @@
 {
   "schema": "HKIA.BetaArtifactPreparation.1",
-  "state": "V33_SHELL266_DISCLOSURE_SELF_QA_CANDIDATE_NOT_RELEASE_AUTHORIZED",
+  "state": "V33_SHELL266_TEST_WARNING_OFF_PUBLIC_CANDIDATE_NOT_DEPLOYED",
   "writer": "OFF",
   "sourceSha256": "d2292444f7556f44f172478f3986b9776e945884c5cd43f85db77c6d80de5611",
   "baseArtifactManifestSha256": "df4b1fa94bd3e25a81b56cc2a03f6e8b31a652a17ede96225fea311cc0ed61d8",
   "entries": 4209,
-  "bytes": 147987150,
+  "bytes": 147989454,
   "webp": 4076,
   "modules": 71,
   "modifiedPaths": [
@@ -16419,8 +16419,8 @@
       "sha256": "2be165233e6c3325ff25360ffdaee1c92c985eb8628234bf5fb11f6b62aecf16"
     },
     "index.html": {
-      "bytes": 12933,
-      "sha256": "379cbe86c78c5b0de57b27b6ae35949226770629474858583c28abba53c6b217"
+      "bytes": 13719,
+      "sha256": "19450c97a6281cc7323450d9fd555228e1c3c15f64dee37298e52f9be5897098"
     },
     "localization/runtime.mjs": {
       "bytes": 4377,
@@ -16859,8 +16859,8 @@
       "sha256": "c6258572b903ff44e88438ebf85f85dded7a123b4b719be2be8e150391f8e7d7"
     },
     "src/style.css": {
-      "bytes": 26911,
-      "sha256": "967e1b08890d994c742ecc346f98658c0a3cd9aaa725e58951ab366e427ef71c"
+      "bytes": 28429,
+      "sha256": "4fbc44d050ce5ef795839c3f0a861cf5d23968473093eafe42355e363e6878c5"
     },
     "src/ui-state.js": {
       "bytes": 13916,
