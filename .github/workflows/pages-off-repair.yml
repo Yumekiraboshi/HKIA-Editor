@@ -11,6 +11,7 @@ on:
         required: true
         type: choice
         options:
+          - V33-SHELL266-V24-OFF
           - V33-SHELL266-TEST-WARNING
           - V33-SHELL266-DISCLOSURE
           - V33-FILE252-DIRTY
@@ -51,8 +52,9 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$ARTIFACT_REF" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$TARGET" == V33-SHELL266-TEST-WARNING || "$TARGET" == V33-SHELL266-DISCLOSURE || "$TARGET" == V33-FILE252-DIRTY || "$TARGET" == V33-FILE252 || "$TARGET" == V33-ACHIEVEMENT-192 || "$TARGET" == V33-ITEMS-192 || "$TARGET" == V33-CATEGORY-192 || "$TARGET" == V33-LOCALE-192 || "$TARGET" == V33-SVELTE-6 || "$TARGET" == V33-SVELTE || "$TARGET" == V33 || "$TARGET" == V30 || "$TARGET" == V29 ]]
+          [[ "$TARGET" == V33-SHELL266-V24-OFF || "$TARGET" == V33-SHELL266-TEST-WARNING || "$TARGET" == V33-SHELL266-DISCLOSURE || "$TARGET" == V33-FILE252-DIRTY || "$TARGET" == V33-FILE252 || "$TARGET" == V33-ACHIEVEMENT-192 || "$TARGET" == V33-ITEMS-192 || "$TARGET" == V33-CATEGORY-192 || "$TARGET" == V33-LOCALE-192 || "$TARGET" == V33-SVELTE-6 || "$TARGET" == V33-SVELTE || "$TARGET" == V33 || "$TARGET" == V30 || "$TARGET" == V29 ]]
           case "$TARGET" in
+            V33-SHELL266-V24-OFF) test "$ARTIFACT_REF" = f749f84e0b529588ba30792cc9b570ff0b3c5aab ;;
             V33-SHELL266-TEST-WARNING) test "$ARTIFACT_REF" = 0680ed6e054f8d8c449b408eb8833e903d0ab2a3 ;;
             V33-SHELL266-DISCLOSURE) test "$ARTIFACT_REF" = eb209147320b501359437f49027b048738ee32a6 ;;
             V33-FILE252-DIRTY) test "$ARTIFACT_REF" = d916c4afc6abed2f1248e8727abbde026037a65b ;;
@@ -87,6 +89,7 @@ jobs:
           set -euo pipefail
           test "$(git -C approved-artifact rev-parse HEAD)" = "$ARTIFACT_REF"
           case "$TARGET" in
+            V33-SHELL266-V24-OFF) expected=8d6c6fd8a359c84c15cc5625867ed2313f5a7a5388327e0bb6ba3489521a4689; source=e7ef5a6f7b2cc77a137fd9dd2592d7e77f03500b4805a014672ee9ff160fb10c ;;
             V33-SHELL266-TEST-WARNING) expected=63fa0aef150a62fe750820fea44e6096810de06dab096cb4dd728f9391f3e86b; source=d2292444f7556f44f172478f3986b9776e945884c5cd43f85db77c6d80de5611 ;;
             V33-SHELL266-DISCLOSURE) expected=4909216e92af5519dda631e315e4d069cac60e299f675a05dd35b5f11944d7a6; source=d2292444f7556f44f172478f3986b9776e945884c5cd43f85db77c6d80de5611 ;;
             V33-FILE252-DIRTY) expected=df4b1fa94bd3e25a81b56cc2a03f6e8b31a652a17ede96225fea311cc0ed61d8; source=bd08ca8b5786ed059fad57ca11f52dc396b53420575e758044d1d733ba41c318 ;;
@@ -103,7 +106,7 @@ jobs:
             *) exit 1 ;;
           esac
           node scripts/00-verify-beta-artifact.mjs approved-artifact/site approved-artifact/site-manifest.json "$expected"
-          EXPECTED_SOURCE="$source" TARGET="$TARGET" node --input-type=module -e 'import fs from "node:fs";const m=JSON.parse(fs.readFileSync("approved-artifact/site-manifest.json"));if(m.writer!=="OFF"||m.sourceSha256!==process.env.EXPECTED_SOURCE||m.entries!==([ "V33-SHELL266-TEST-WARNING","V33-SHELL266-DISCLOSURE" ].includes(process.env.TARGET)?4209:["V33-FILE252-DIRTY","V33-FILE252"].includes(process.env.TARGET)?4194:process.env.TARGET==="V33-ACHIEVEMENT-192"?4179:process.env.TARGET==="V33-ITEMS-192"?4177:process.env.TARGET==="V33-CATEGORY-192"?4174:process.env.TARGET==="V33-LOCALE-192"?4173:process.env.TARGET==="V33-SVELTE-6"?4153:process.env.TARGET==="V33-SVELTE"?4152:4146)||m.webp!==4076||m.modules!==(["V33-SHELL266-TEST-WARNING","V33-SHELL266-DISCLOSURE","V33-FILE252-DIRTY","V33-FILE252"].includes(process.env.TARGET)?71:process.env.TARGET==="V33-ACHIEVEMENT-192"?71:process.env.TARGET==="V33-ITEMS-192"?69:process.env.TARGET==="V33-CATEGORY-192"?66:process.env.TARGET==="V33-LOCALE-192"?65:process.env.TARGET==="V33-SVELTE-6"?61:process.env.TARGET==="V33-SVELTE"?60:55))throw Error("Unexpected OFF source or scope");if(Object.keys(m.files).some(p=>p.startsWith("coordination/")||p.startsWith("tests/")||p.startsWith(".github/")))throw Error("Internal path")'
+          EXPECTED_SOURCE="$source" TARGET="$TARGET" node --input-type=module -e 'import fs from "node:fs";const m=JSON.parse(fs.readFileSync("approved-artifact/site-manifest.json"));if(m.writer!=="OFF"||m.sourceSha256!==process.env.EXPECTED_SOURCE||m.entries!==(process.env.TARGET==="V33-SHELL266-V24-OFF"?4211:[ "V33-SHELL266-TEST-WARNING","V33-SHELL266-DISCLOSURE" ].includes(process.env.TARGET)?4209:["V33-FILE252-DIRTY","V33-FILE252"].includes(process.env.TARGET)?4194:process.env.TARGET==="V33-ACHIEVEMENT-192"?4179:process.env.TARGET==="V33-ITEMS-192"?4177:process.env.TARGET==="V33-CATEGORY-192"?4174:process.env.TARGET==="V33-LOCALE-192"?4173:process.env.TARGET==="V33-SVELTE-6"?4153:process.env.TARGET==="V33-SVELTE"?4152:4146)||m.webp!==4076||m.modules!==(process.env.TARGET==="V33-SHELL266-V24-OFF"?73:["V33-SHELL266-TEST-WARNING","V33-SHELL266-DISCLOSURE","V33-FILE252-DIRTY","V33-FILE252"].includes(process.env.TARGET)?71:process.env.TARGET==="V33-ACHIEVEMENT-192"?71:process.env.TARGET==="V33-ITEMS-192"?69:process.env.TARGET==="V33-CATEGORY-192"?66:process.env.TARGET==="V33-LOCALE-192"?65:process.env.TARGET==="V33-SVELTE-6"?61:process.env.TARGET==="V33-SVELTE"?60:55))throw Error("Unexpected OFF source or scope");if(Object.keys(m.files).some(p=>p.startsWith("coordination/")||p.startsWith("tests/")||p.startsWith(".github/")))throw Error("Internal path")'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
