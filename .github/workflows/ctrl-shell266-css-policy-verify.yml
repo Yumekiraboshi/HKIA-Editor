@@ -1,0 +1,50 @@
+name: CTRL Shell266 CSS public policy self CI (no deploy)
+on:
+  push:
+    branches:
+      - ctrl/shell266-css-policy-self-ci-20261117
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout fixed public verifier
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Checkout exact new Writer-OFF public candidate
+        uses: actions/checkout@v4
+        with:
+          repository: Yumekiraboshi/HKIA-Editor
+          ref: 0680ed6e054f8d8c449b408eb8833e903d0ab2a3
+          path: approved-artifact
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Exact source, public comment policy and 4209 manifest verify
+        run: |
+          set -euo pipefail
+          test "$(git -C approved-artifact rev-parse HEAD)" = 0680ed6e054f8d8c449b408eb8833e903d0ab2a3
+          test "$(git hash-object scripts/00-verify-beta-artifact.mjs)" = 1adca007becc7b0a4edb422496da8cbb2a7f25a8
+          test "$(git hash-object scripts/pages-artifact-policy.mjs)" = d6fc2872db11c301eef312574e3f4dfed16af138
+          test "$(git hash-object scripts/lossless-webp.mjs)" = fedeae3bd28ddda39e10f46902a44cc74ae930e4
+          node scripts/00-verify-beta-artifact.mjs approved-artifact/site approved-artifact/site-manifest.json 63fa0aef150a62fe750820fea44e6096810de06dab096cb4dd728f9391f3e86b
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import crypto from "node:crypto";
+            const root="approved-artifact/site/";
+            const m=JSON.parse(fs.readFileSync("approved-artifact/site-manifest.json","utf8"));
+            const css=fs.readFileSync(root+"src/style.css","utf8");
+            const h=crypto.createHash("sha256").update(css).digest("hex");
+            if(m.writer!=="OFF"||m.entries!==4209||m.webp!==4076||m.modules!==71||m.bytes!==147989202)throw Error("scope OFF/count mismatch");
+            if(h!=="ecdefa90f18f77d35d9e08f85dc913864b31949d9cb5f3cf9c537ecc079224be"||m.files["src/style.css"].sha256!==h)throw Error("CSS mismatch");
+            if(css.includes("/*")||css.includes("*/"))throw Error("CSS comment");
+            if(m.files["index.html"].sha256!=="19450c97a6281cc7323450d9fd555228e1c3c15f64dee37298e52f9be5897098")throw Error("index changed");
+            console.log("SELF_SCOPE_PASS CSS comment-free, fixed manifest, Writer OFF");
+          '
