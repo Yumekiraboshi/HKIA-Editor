@@ -9,7 +9,9 @@
   <title>HKIA Save Editor — Local Preview v0.2.11</title>
   <link rel="stylesheet" href="./src/style.css">
   <script type="module" src="./media/boot.mjs"></script>
+  <script type="module" src="./inventory-live/inventory-live.js"></script>
   <link rel="stylesheet" href="./src/product-locale-root-192.css">
+  <link rel="stylesheet" href="./inventory-live/inventory-live.css">
 </head>
 <body>
 <div class="site-shell hk-product-save-first">
@@ -39,6 +41,7 @@
       <p id="hkiaSpaceDisabledReason">配置・所有参照の整合と原子的Restoreが未受入のため無効です。</p>
       <p>Achievement / CollectionのNative編集出力も未受入です。表示・Previewは編集済みセーブの保存を意味しません。</p>
     </section>
+    <div id="inventoryLiveMount" aria-live="polite"></div>
     <section class="workspace" aria-label="実績とコレクション">
       <div class="primary-tabs" role="tablist" aria-label="表示する機能">
         <button id="achTab" role="tab" aria-controls="achPanel" aria-selected="true" class="primary-tab active" type="button">🏅 <span>アチーブメント</span></button>

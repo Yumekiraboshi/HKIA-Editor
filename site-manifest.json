@@ -2,12 +2,12 @@
   "schema": "HKIA.BetaArtifactPreparation.1",
   "state": "HKIA_PUBLIC_WRITER_OFF_DELTA_FIXED_CANDIDATE_FOR_INDEPENDENT_QA",
   "writer": "OFF",
-  "sourceSha256": "e22576fc9d02ef18838615370b28c5a1c32e08942d4064e414caf9c9e0a16304",
-  "baseArtifactManifestSha256": "dfa3ffbe76adeaf2f422ed78ab9ce4ace1b1b955c2f164d68323009f0a2c4071",
-  "entries": 4211,
-  "bytes": 147999346,
+  "sourceSha256": "4433930d727f2032e5f435d3ffec9a9fbbb16b72bce100614e23f2d61e351fdd",
+  "baseArtifactManifestSha256": "dcb084510b49e3a3de5877bcef9fd744268e9021b83fc4524dbca3e0c8abb2c6",
+  "entries": 4214,
+  "bytes": 148040529,
   "webp": 4076,
-  "modules": 73,
+  "modules": 75,
   "modifiedPaths": [
     "index.html",
     "src/app.js",
@@ -17,6 +17,8 @@
     "src/style.css"
   ],
   "addedPaths": [
+    "inventory-live/inventory-live.css",
+    "inventory-live/inventory-live.js",
     "localization/ui-shell266/de.json",
     "localization/ui-shell266/en-GB.json",
     "localization/ui-shell266/en.json",
@@ -32,6 +34,7 @@
     "localization/ui-shell266/tr.json",
     "localization/ui-shell266/zh-Hans.json",
     "localization/ui-shell266/zh-Hant.json",
+    "src/inventory-unknown-host-bridge.mjs",
     "src/product-pages-v24-gate.mjs",
     "src/product-pages-v24-shell266-view.mjs"
   ],
@@ -16421,8 +16424,16 @@
       "sha256": "2be165233e6c3325ff25360ffdaee1c92c985eb8628234bf5fb11f6b62aecf16"
     },
     "index.html": {
-      "bytes": 13523,
-      "sha256": "498de572a36d94a43b0cda92635819859c864e4bf639e410e5e5e6e37016f9d9"
+      "bytes": 13726,
+      "sha256": "311a3174de58ba5a96aee431ca45c25c33666f6002e05c118c4a5b3dc19b0c66"
+    },
+    "inventory-live/inventory-live.css": {
+      "bytes": 1062,
+      "sha256": "3ef36d628a99894414ff08db4bcf20a3126ce768001c1e87680f35aa9d60719a"
+    },
+    "inventory-live/inventory-live.js": {
+      "bytes": 36261,
+      "sha256": "9732a68184d66a77a36d7501686f68f2075b1b4c0c1664e66d53212e3c422ea4"
     },
     "localization/runtime.mjs": {
       "bytes": 4377,
@@ -16737,8 +16748,8 @@
       "sha256": "8b5e3e7049055ef38a647afe75635a9fc45fc44b10af3e4b473417f9d2021019"
     },
     "src/app.js": {
-      "bytes": 127172,
-      "sha256": "4d03c30d8e5bcbadd659264b0e3583c8529d388bf46ed110008d97a05af8a6e7"
+      "bytes": 127512,
+      "sha256": "fac07203a17aae3d9d3030c531bd0f8579462d53970f3515325459dc48d9510b"
     },
     "src/collection-history-extension.js": {
       "bytes": 9717,
@@ -16787,6 +16798,10 @@
     "src/image-ui.js": {
       "bytes": 10396,
       "sha256": "2f2e6e36d28f8628a4336eb64bc42fb6898b6c2b71873f03fe18f18719ecfa47"
+    },
+    "src/inventory-unknown-host-bridge.mjs": {
+      "bytes": 3317,
+      "sha256": "9e06a1caa78bac7f5e1a751fd1611a8eadbbd25b71feb65c7190f2772338d0b4"
     },
     "src/native-preview-ui.js": {
       "bytes": 53233,

@@ -15,6 +15,7 @@ import {createPagesV24OffGate} from './product-pages-v24-gate.mjs';
 import {createShell266V24StatusView} from './product-pages-v24-shell266-view.mjs';
 
 import {createFile252ProductPort,file252Role as fileRole,projectFile252Facts,projectNative252Facts,projectSlot252Facts} from './product-locale-root-192.mjs';
+import {createInventoryUnknownHostBridge} from './inventory-unknown-host-bridge.mjs';
 const el=id=>document.getElementById(id);
 let file252Port=null;
 const displayFacts=fn=>{try{return fn();}catch{return null;}};
@@ -33,6 +34,9 @@ function appendFileDetail(host,label,value,receipt){
 function currentFileFacts(){return displayFacts(()=>projectFile252Facts({hasAccount:!!state.account,hasSlot:!!state.save,dirty:state.dirty,structuralReadOnly:state.slotEvidence?.accountExportAllowed===false,sourceLoading:state.sourceLoading,revisionChanged:state.revisionChanged,archiveLoaded:state.archiveLoaded,zipExportBusy:state.zipExportBusy,sourceLoadEpoch:state.sourceLoadEpoch,revision:state.sourceRevision,revisionError:state.sourceRevisionError,accountCount:state.account?Object.keys(state.account.Achievements).length:0,slotCount:state.save?(state.slotEvidence?.readable.achievement===false?null:state.save.achievements.length):0}));}
 
 const state={account:null,accountOriginal:null,accountBaseline:null,history:[],visibleAccountGuids:[],achLimit:120,save:null,saveOriginal:null,slotEvidence:null,source:'account',originalName:null,originalBytes:null,dirty:false,selectedAchievement:null,selectedCollection:null,selectedCollectionDefinition:null,itemManifest:null,parentManifest:null,collectionMatch:null,parentMatch:null,collectionReadModel:null,collectionHistoryDisplay:null,selectedItemId:null,archiveLoaded:false,sourceRevision:null,sourceRevisionError:null,revisionChanged:false,sourceLoadEpoch:0,sourceLoading:false,accountEditGeneration:0,zipExportBusy:false,collections:[],collectionDefinitions:[],achievementDefinitions:new Map(),slotCounterDefinitions:new Map(),slotAchievementDefinitions:new Map(),localAchievementDefinitions:new Map(),slotGroupMembers:new Map(),slotCountersByGuid:new Map(),slotAchievementsByGuid:new Map(),localAchievementLocales:new Map()};
+const inventoryUnknownHost=createInventoryUnknownHostBridge(()=>state,packet=>{
+  document.dispatchEvent(new CustomEvent('hkia:inventory-unknown-host-signal',{detail:packet}));
+});
 const nativePreview=createNativePreviewController({open:async bytes=>{const mod=await import('../native-product/worker-client.mjs');return mod.openNativeProductWorkerSession(bytes);},live:()=>({bytes:state.originalBytes,revision:state.sourceRevision?.sha256,generation:state.accountEditGeneration,name:state.originalName,eligible:!!state.archiveLoaded&&!!state.originalBytes&&!!state.save&&!!state.account&&!state.sourceLoading&&!state.dirty&&state.sourceRevision?.format==='zip'})});
 const V24_GATED_PREVIEW=new Set(["collection-key1-ticks","collection-key1-add","collection-key1-remove","achievement-timestamp","achievement-progress","puzzle-goals-complete","batch-independent-scalars","collection-recipe-quantity"]);
 const SHELL266_LEGACY_PREVIEW=new Set(["collection-recipe-expansion-quantity","collection-recipe-expansion23-quantity","collection-recipe-celebration5-quantity","batch-family-revoke","achievement-family-revoke","achievement-formal49-edit","achievement-manual9-revoke"]);
@@ -55,7 +59,7 @@ function v24OrLegacyVerify(proof){
 let nativeNotice='',nativeNoticeFact={kind:'none'},nativeOpenAttempt=0;
 function setNativeNotice(text,kind='raw',reason=text){nativeNotice=text;nativeNoticeFact=!text?{kind:'none'}:kind==='raw'||kind==='exportFailed'?{kind,reason}:{kind};}
 const nativeModuleStaged=()=>document.documentElement.dataset.nativePreview==='staged';
-function closeNativePreviewSession(){nativeOpenAttempt++;nativePreview.close();}
+function closeNativePreviewSession(){inventoryUnknownHost.invalidate();nativeOpenAttempt++;nativePreview.close();}
 function renderNativeSession(){
   const host=el('nativeSessionStatus');if(!host)return;let x=nativePreview.status();if(!x.ready&&!x.busy&&x.revision){closeNativePreviewSession();x=nativePreview.status();}host.replaceChildren();
   const v24Pages=pagesV24OffGate.status();
@@ -387,7 +391,7 @@ async function loadFile(file,shellExpected=null){
     state.sourceRevision=nextRevision;state.sourceRevisionError=revisionError;state.revisionChanged=Boolean(prior&&nextRevision&&prior.sha256!==nextRevision.sha256);state.sourceLoading=false;
     for(const id of ['achievementSearch','collectionSearch'])el(id).value='';for(const id of ['achievementFilter','achievementImageFilter','collectionStatusFilter'])el(id).value='all';
     state.source=account?'account':'slot';state.visibleAccountGuids=[];state.achLimit=120;el('batchResult').replaceChildren();state.dirty=false;state.selectedAchievement=null;state.selectedCollectionDefinition=null;state.selectedItemId=null;
-    showInfo();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();
+    showInfo();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();inventoryUnknownHost.acceptValidated();
   }catch(e){if(epoch!==state.sourceLoadEpoch)return;state.sourceLoading=false;state.sourceRevision=null;state.sourceRevisionError='読み込み失敗。前のプレビューは無効です';state.originalBytes=null;state.archiveLoaded=false;state.account=null;state.accountBaseline=null;state.save=null;state.slotEvidence=null;state.dirty=false;el('fileInfo').hidden=true;setStatus();renderSourceRevision();renderNativeSession();renderAchievements();renderCollections();error(`読み込み失敗：${e.message}`,loadFailureRole??fileRole('file.loadFailedReason',{reason:e.message}));}
 }
 function achievements(){
