@@ -1,0 +1,28 @@
+name: 00 PR28 fixed Writer-OFF target source-only gate (nondeploy)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/pages-off-repair.yml'
+      - 'tests/00-pr28-fixed-manual-off-target.test.mjs'
+      - '.github/workflows/00-pr28-fixed-manual-target-source-ci.yml'
+permissions:
+  contents: read
+jobs:
+  exact-off-target:
+    if: github.repository == 'Yumekiraboshi/HKIA-Editor'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check fixed manual OFF allowlist and live shell negative gates without dispatch
+        run: |
+          set -euo pipefail
+          node --test tests/00-pr28-fixed-manual-off-target.test.mjs
+          echo 'SOURCE_ONLY_QA_NO_ARTIFACT_UPLOAD_NO_PAGES_DEPLOY'
