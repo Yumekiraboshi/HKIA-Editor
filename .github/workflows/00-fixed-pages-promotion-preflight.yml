@@ -1,0 +1,25 @@
+name: 00 fixed Pages promotion source-only preflight (no deploy)
+on:
+  pull_request:
+    paths:
+      - 'scripts/00-fixed-pages-promotion-preflight.mjs'
+      - 'tests/00-fixed-pages-promotion-preflight.test.mjs'
+      - '.github/workflows/00-fixed-pages-promotion-preflight.yml'
+permissions:
+  contents: read
+jobs:
+  source-only:
+    if: github.repository == 'Yumekiraboshi/HKIA-Editor'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read-only syntax and negative tests; no release
+        run: |
+          node --check scripts/00-fixed-pages-promotion-preflight.mjs
+          node --test tests/00-fixed-pages-promotion-preflight.test.mjs
