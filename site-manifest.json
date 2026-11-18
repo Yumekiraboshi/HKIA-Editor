@@ -1,11 +1,11 @@
 {
   "schema": "HKIA.BetaArtifactPreparation.1",
-  "state": "V33_SHELL266_V24_OFF_PUBLIC_CANDIDATE_NOT_DEPLOYED",
+  "state": "V33_SHELL266_V24_OFF_DISABLED_SCOPE_CANDIDATE_NOT_DEPLOYED",
   "writer": "OFF",
-  "sourceSha256": "e7ef5a6f7b2cc77a137fd9dd2592d7e77f03500b4805a014672ee9ff160fb10c",
-  "baseArtifactManifestSha256": "63fa0aef150a62fe750820fea44e6096810de06dab096cb4dd728f9391f3e86b",
+  "sourceSha256": "b714c187ac94356243eb478e333b13d7a47c9a1ee31667292b50c1f32e5ff04a",
+  "baseArtifactManifestSha256": "8d6c6fd8a359c84c15cc5625867ed2313f5a7a5388327e0bb6ba3489521a4689",
   "entries": 4211,
-  "bytes": 147999090,
+  "bytes": 148000146,
   "webp": 4076,
   "modules": 73,
   "modifiedPaths": [
@@ -16421,8 +16421,8 @@
       "sha256": "2be165233e6c3325ff25360ffdaee1c92c985eb8628234bf5fb11f6b62aecf16"
     },
     "index.html": {
-      "bytes": 13719,
-      "sha256": "19450c97a6281cc7323450d9fd555228e1c3c15f64dee37298e52f9be5897098"
+      "bytes": 14775,
+      "sha256": "ea219da32b2842d37c2799ac135c6c2978d4dc51c2b19e95ace76b9614f91040"
     },
     "localization/runtime.mjs": {
       "bytes": 4377,
