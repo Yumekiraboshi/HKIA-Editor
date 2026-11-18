@@ -5,9 +5,9 @@ import {spawnSync} from 'node:child_process';
 
 const workflow=readFileSync(new URL('../.github/workflows/pages-off-repair.yml',import.meta.url),'utf8');
 const TARGET='V33-SHELL266-V24-OFF-COMPACT-RIGHTS';
-const ARTIFACT='e09b6a4b756c5f7813f601fbb9d19e304b0c9295';
-const MANIFEST='8e0a8007ba0c6d1b55a87101ed30a439eb8fc2314c163244beb5c94729eb0c8c';
-const SOURCE='f627c405ba68958c84353860cb2397d3e07bd253cecaa5346176d7e8abd36e86';
+const ARTIFACT='6272cd39300a0b83331e4f6d16a9eeface577bec';
+const MANIFEST='dcb084510b49e3a3de5877bcef9fd744268e9021b83fc4524dbca3e0c8abb2c6';
+const SOURCE='e22576fc9d02ef18838615370b28c5a1c32e08942d4064e414caf9c9e0a16304';
 const OLD_TARGET='V33-SHELL266-V24-OFF-DISABLED-SCOPE';
 const OLD_ARTIFACT='7ff318fc6aa08b0b40ce93df8287290b0dbc8260';
 const OLD_MANIFEST='dfa3ffbe76adeaf2f422ed78ab9ce4ace1b1b955c2f164d68323009f0a2c4071';
