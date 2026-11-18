@@ -194,4 +194,4 @@ button:disabled{opacity:.58;cursor:not-allowed}
 .hk-editor-legal #attributionNotice{margin:0;overflow-wrap:anywhere}
 body:has(#fileInfo:not([hidden])) .hk-editor-legal,
 body:has(#hkiaProductWorkspace:not([hidden])) .hk-editor-legal{display:none}
-@media(max-width:760px){.hk-editor-legal{font-size:10px;padding:4px 0 7px}}
+@media(max-width:760px){.hk-product-save-first>footer.hk-editor-legal{font-size:10px;padding:4px 0 7px}}

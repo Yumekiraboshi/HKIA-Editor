@@ -2,10 +2,10 @@
   "schema": "HKIA.BetaArtifactPreparation.1",
   "state": "HKIA_PUBLIC_WRITER_OFF_DELTA_FIXED_CANDIDATE_FOR_INDEPENDENT_QA",
   "writer": "OFF",
-  "sourceSha256": "f627c405ba68958c84353860cb2397d3e07bd253cecaa5346176d7e8abd36e86",
+  "sourceSha256": "e22576fc9d02ef18838615370b28c5a1c32e08942d4064e414caf9c9e0a16304",
   "baseArtifactManifestSha256": "dfa3ffbe76adeaf2f422ed78ab9ce4ace1b1b955c2f164d68323009f0a2c4071",
   "entries": 4211,
-  "bytes": 147999317,
+  "bytes": 147999346,
   "webp": 4076,
   "modules": 73,
   "modifiedPaths": [
@@ -16869,8 +16869,8 @@
       "sha256": "c6258572b903ff44e88438ebf85f85dded7a123b4b719be2be8e150391f8e7d7"
     },
     "src/style.css": {
-      "bytes": 28600,
-      "sha256": "4cb34b1824538e9691ad83f25fa45c79a192ad7b84a2b5854641da2cce465245"
+      "bytes": 28629,
+      "sha256": "1040f3d9e3ed44b4850ccd96a26fe79b97c0f6b4e3103cce3fed5516457cedf5"
     },
     "src/ui-state.js": {
       "bytes": 13916,
