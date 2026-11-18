@@ -29,6 +29,16 @@
     <div id="hkiaLocaleChrome"></div>
     <div id="hkiaSaveFirstHost"></div>
     <div id="hkiaProductWorkspace" hidden inert>
+    <section id="hkiaUnavailableEditors" class="linked-state-info" aria-labelledby="hkiaUnavailableEditorsTitle" role="note">
+      <strong id="hkiaUnavailableEditorsTitle">未対応の編集機能（現在は操作できません）</strong>
+      <div class="button-row" role="group" aria-label="未対応の編集操作">
+        <button type="button" class="btn-secondary" disabled aria-describedby="hkiaInventoryDisabledReason">📦 所持品編集</button>
+        <button type="button" class="btn-secondary" disabled aria-describedby="hkiaSpaceDisabledReason">🏠 Cabin / Home 復元</button>
+      </div>
+      <p id="hkiaInventoryDisabledReason">所持品の数量・所有・参照整合を保つ真正編集が未受入のため無効です。</p>
+      <p id="hkiaSpaceDisabledReason">配置・所有参照の整合と原子的Restoreが未受入のため無効です。</p>
+      <p>Achievement / CollectionのNative編集出力も未受入です。表示・Previewは編集済みセーブの保存を意味しません。</p>
+    </section>
     <section class="workspace" aria-label="実績とコレクション">
       <div class="primary-tabs" role="tablist" aria-label="表示する機能">
         <button id="achTab" role="tab" aria-controls="achPanel" aria-selected="true" class="primary-tab active" type="button">🏅 <span>アチーブメント</span></button>
