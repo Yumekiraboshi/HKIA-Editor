@@ -1,0 +1,29 @@
+name: 00 Inventory UNKNOWN fixed manual OFF target source-only CI (nondeploy)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/pages-off-repair.yml'
+      - 'tests/00-inventory-unknown-off-manual-target.test.mjs'
+      - '.github/workflows/00-inventory-unknown-off-release-source-ci.yml'
+permissions:
+  contents: read
+jobs:
+  fixed-inventory-unknown-off-target:
+    if: github.repository == 'Yumekiraboshi/HKIA-Editor'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check immutable 4214 Inventory UNKNOWN Writer-OFF manual-only target
+        run: |
+          set -euo pipefail
+          node --test tests/00-inventory-unknown-off-manual-target.test.mjs
+          node --test tests/00-pr28-fixed-manual-off-target.test.mjs
+          echo 'SOURCE_ONLY_QA_NO_ARTIFACT_UPLOAD_NO_PAGES_DEPLOY'
